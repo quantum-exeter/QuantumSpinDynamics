@@ -95,7 +95,7 @@ module RCLib
     end
 
     ### RC Hamiltonian ###
-    HRC(n, λ, Ω) = kronecker(sz0, 𝕀b(n)) + (λ/ωL)*kronecker(sx0, (create(n) + annihilate(n))) + kronecker(𝕀s, (Ω/ωL)*(create(n)*annihilate(n)))
+    HRC(n, λ, Ω) = sign(γ)*kronecker(sz0, 𝕀b(n)) + (λ/ωL)*kronecker(sx0, (create(n) + annihilate(n))) + kronecker(𝕀s, (Ω/ωL)*(create(n)*annihilate(n)))
 
     ### Transition Frequencies ###
     function transitions(n, λ, Ω)
