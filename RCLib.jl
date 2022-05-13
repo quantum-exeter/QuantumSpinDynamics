@@ -12,7 +12,7 @@ module RCLib
     ####################################
 
     ### Exports ###
-    export ωL, ρ0, 𝒮, sx0, sy0, sz0, 𝕀b
+    export ωL, ρ0, 𝒮, sx0, sy0, sz0, 𝕀b, HRC, gibbs, ptrace, ℱ
 
     ### Variables ###
     γ = -1.76*10^(11) # Gyromagnetic ratio for an electron (T^-1s^-1)
@@ -32,6 +32,9 @@ module RCLib
     # Commutators/Anticommutators #
     comm(A,B) = A*B - B*A
     acomm(A,B) = A*B + B*A
+
+    # Square
+    square(n) = n * n
 
     ### Initial States ###
 
@@ -95,7 +98,7 @@ module RCLib
     end
 
     ### RC Hamiltonian ###
-    HRC(n, λ, Ω) = sign(γ)*kronecker(sz0, 𝕀b(n)) + (λ/ωL)*kronecker(sx0, (create(n) + annihilate(n))) + kronecker(𝕀s, (Ω/ωL)*(create(n)*annihilate(n)))
+    HRC(n, λ, Ω) = -sign(γ)*kronecker(sz0, 𝕀b(n)) + (λ/ωL)*kronecker(sx0, (create(n) + annihilate(n))) + kronecker(𝕀s, (Ω/ωL)*(create(n)*annihilate(n)))
 
     ### Transition Frequencies ###
     function transitions(n, λ, Ω)
@@ -136,7 +139,7 @@ module RCLib
         len = length(transitions(n, λ, Ω)[1])
         ωb = transitions(n, λ, Ω)[1]
         Aj = transitions(n, λ, Ω)[2]
-        return(-(π/2)*sum(spectral_density(ωb[i], δ)*Aj[i] for i=1:len))
+        return((π/2)*sum(spectral_density(ωb[i], δ)*Aj[i] for i=1:len))
     end
 
     # Left/Right Multiplication Superoperators
@@ -154,4 +157,22 @@ module RCLib
         Θ = Θop(n, Ω, λ, δ)
         return(-im*(L(H) - R(H)) - L(Atot)*(L(χ) - R(χ)) + R(Atot)*(L(χ) - R(χ)) + L(Atot)*(L(Θ) + R(Θ)) - R(Atot)*(L(Θ) + R(Θ)))
     end
+
+    ### HMF Calculations ###
+    function gibbs(H, T)
+        𝒵 = tr(exp(-(cfac*H/T)))
+        return((1/𝒵)*exp(-(cfac*H/T)))
+    end
+
+    function ptrace(ρ, n)
+        ρs = zeros(Complex{Float64}, 2, 2)
+        ρs[1, 1] = sum(ρ[i, i] for i=1:n)
+        ρs[1, 2] = sum(ρ[i, i + n] for i=1:n)
+        ρs[2, 1] = sum(ρ[i + n, i] for i=1:n)
+        ρs[2, 2] = sum(ρ[i + n, i + n] for i=1:n)
+        return(ρs)
+    end
+
+    ℱ(ρ1, ρ2) = square(tr(sqrt(sqrt(ρ1)*ρ2*sqrt(ρ1))))
+
 end
