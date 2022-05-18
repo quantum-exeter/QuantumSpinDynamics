@@ -5,14 +5,13 @@ module RCLib
     using Kronecker
     using OrdinaryDiffEq
     using DifferentialEquations
-    using Plots
 
     ####################################
     ####################################
     ####################################
 
     ### Exports ###
-    export ωL, ρ0, 𝒮, sx0, sy0, sz0, 𝕀b, HRC, gibbs, ptrace, ℱ
+    export ωL, ρ0, 𝒮, sx0, sy0, sz0, 𝕀b, gibbs, HSp1D, HRC1D, HSp2D, HRC2D, ptrace, ℱ
 
     ### Variables ###
     γ = -1.76*10^(11) # Gyromagnetic ratio for an electron (T^-1s^-1)
@@ -36,6 +35,9 @@ module RCLib
     # Square
     square(n) = n * n
 
+    # Make Integer
+    int(x) = floor(Int, x)
+
     ### Initial States ###
 
     # Spins #
@@ -47,22 +49,19 @@ module RCLib
     sz0 = 0.5*σz
 
     function bloch_state(θ, ϕ)
-        return([cos(θ/2)^2 0.5*exp(-im*ϕ)*sin(θ); 0.5*exp(im*ϕ)*sin(θ) sin(θ/2)^2])
+        return [cos(θ/2)^2 0.5*exp(-im*ϕ)*sin(θ); 0.5*exp(im*ϕ)*sin(θ) sin(θ/2)^2]
     end
 
     # RC #
-    function thermal_state(n, ω0, T)
-        ϵ = zeros(n) # Initialise empty array for energies of RC harmonic oscillator
-        for i in 1:n
-            ϵ[i] = ħ*ω0*(i - 0.5)
-        end
-        𝒵 = sum(exp(-ϵ[i]/(kB*T)) for i = 1:n)
-        Hb = diagm(ϵ)
-        return((1/𝒵)*exp(-Hb/(kB*T)))
+    function gibbs(H, n, T)
+        ϵ = eigvals(H)
+        𝒵 = sum(exp(-(cfac*ϵ[i])/T) for i = 1:n)
+        return (1/𝒵)*Diagonal([exp(-(cfac*ϵ[i])/T) for i = 1:n])
     end
 
     # Joint Initital State #
-    ρ0(θ, ϕ, n, ω0, T) = kronecker(bloch_state(θ, ϕ), thermal_state(n, ω0, T))
+    ρ0(θ, ϕ, H, n, T) = kronecker(bloch_state(θ, ϕ), thermal_state(H, n, T))
+    ρ02D(θ, ϕ, nx, ny, ω0x, ω0y, Tx, Ty) = kronecker(bloch_state(θ, ϕ), thermal_state(nx, ω0x, Tx), thermal_state(ny, ω0y, Ty))
 
     ### Creation and Annihilation Operators ###
     function create(n)
@@ -82,31 +81,33 @@ module RCLib
     end
 
     function annihilate(n)
-        matrix = zeros(n, n)
-        for i in Array(1:n)
-            new_row = zeros(1, n)
-            for j in 1:n
-                if i == j+1
-                    new_row[j] = sqrt(i-1)
-                else
-                    new_row[j] = 0
-                end
-            end
-            matrix[[i],:] = new_row
-        end
-        return adjoint(matrix)
+        return adjoint(create(n))
     end
 
-    ### RC Hamiltonian ###
-    HRC(n, λ, Ω) = -sign(γ)*kronecker(sz0, 𝕀b(n)) + (λ/ωL)*kronecker(sx0, (create(n) + annihilate(n))) + kronecker(𝕀s, (Ω/ωL)*(create(n)*annihilate(n)))
+    ### 1D Spin Hamiltonian ###
+    HSp1D(n) = -sign(γ)*kronecker(sz0, 𝕀b(n))
+
+    ### 1D RC Hamiltonian ###
+    HRC1D(n, λ, Ω) = -sign(γ)*kronecker(sz0, 𝕀b(n)) + (λ/ωL)*kronecker(sx0, (create(n) + annihilate(n))) + kronecker(𝕀s, (Ω/ωL)*(create(n)*annihilate(n)))
+
+    ### 2D Spin Hamiltonian ###
+    HSp2D(nx, nz) = -sign(γ)*kronecker(sz0, 𝕀b(nx), 𝕀b(nz))
+
+    ### 2D RC Hamiltonian ###
+    function HRC2D(nx, nz, λx, λz, Ωx, Ωz)
+        spin = -sign(γ)*kronecker(sz0, 𝕀b(nx), 𝕀b(nz))
+        rc = kronecker(𝕀s, (Ωx/ωL)*(create(nx)*annihilate(nx)), 𝕀b(nz)) + kronecker(𝕀s, 𝕀b(nx), (Ωz/ωL)*(create(nz)*annihilate(nz)))
+        int = (λx/ωL)*kronecker(sx0, (create(nx) + annihilate(nx)), 𝕀b(nz)) + (λz/ωL)*kronecker(sz0, 𝕀b(nx), (create(nz) + annihilate(nz)))
+        return(spin + rc + int)
+    end
 
     ### Transition Frequencies ###
     function transitions(n, λ, Ω)
         table = zeros(2n, 2n)
         bohr_frequencies = Float64[]
         jump_ops = Any[]
-        eval = eigvals(HRC(n, λ, Ω))
-        evec = eigvecs(HRC(n, λ, Ω))
+        eval = eigvals(HRC1D(n, λ, Ω))
+        evec = eigvecs(HRC1D(n, λ, Ω))
         proj(i) = evec[:,i]*adjoint(evec[:,i])
         A = kron(𝕀s, (create(n) + annihilate(n)))
         # Create a table of transition frequencies
@@ -129,16 +130,18 @@ module RCLib
 
     # Iles-Smith RC ME Parameters
     function χop(n, Ω, λ, δ, T)
-        len = length(transitions(n, λ, Ω)[1])
-        ωb = transitions(n, λ, Ω)[1]
-        Aj = transitions(n, λ, Ω)[2]
+        transitions_list = transitions(n, λ, Ω)
+        len = length(transitions_list[1])
+        ωb = transitions_list[1]
+        Aj = transitions_list[2]
         return((pi/2)*sum(spectral_density(ωb[i], δ)*coth((cfac*ωb[i])/(2*T))*Aj[i] for i=1:len))
     end
 
     function Θop(n, Ω, λ, δ)
-        len = length(transitions(n, λ, Ω)[1])
-        ωb = transitions(n, λ, Ω)[1]
-        Aj = transitions(n, λ, Ω)[2]
+        transitions_list = transitions(n, λ, Ω)
+        len = length(transitions_list[1])
+        ωb = transitions_list[1]
+        Aj = transitions_list[2]
         return((π/2)*sum(spectral_density(ωb[i], δ)*Aj[i] for i=1:len))
     end
 
@@ -150,9 +153,10 @@ module RCLib
     function 𝒮(n, Ω, λ, δ, T)
         L(operator) = ℒ(operator, n)
         R(operator) = ℛ(operator, n)
-        H = HRC(n, λ, Ω)
-        len = length(transitions(n, λ, Ω)[1])
-        Atot = sum(transitions(n, λ, Ω)[2][i] for i=1:len)
+        H = HRC1D(n, λ, Ω)
+        transitions_list = transitions(n, λ, Ω)
+        len = length(transitions_list[1])
+        Atot = sum(transitions_list[2][i] for i=1:len)
         χ = χop(n, Ω, λ, δ, T)
         Θ = Θop(n, Ω, λ, δ)
         return(-im*(L(H) - R(H)) - L(Atot)*(L(χ) - R(χ)) + R(Atot)*(L(χ) - R(χ)) + L(Atot)*(L(Θ) + R(Θ)) - R(Atot)*(L(Θ) + R(Θ)))
@@ -165,12 +169,8 @@ module RCLib
     end
 
     function ptrace(ρ, n)
-        ρs = zeros(Complex{Float64}, 2, 2)
-        ρs[1, 1] = sum(ρ[i, i] for i=1:n)
-        ρs[1, 2] = sum(ρ[i, i + n] for i=1:n)
-        ρs[2, 1] = sum(ρ[i + n, i] for i=1:n)
-        ρs[2, 2] = sum(ρ[i + n, i + n] for i=1:n)
-        return(ρs)
+        nR = int(size(ρ, 1)/n)
+        return(sum(((𝕀b(nR)⊗𝕀b(n)[[i],:])*ρ*(𝕀b(nR)⊗𝕀b(n)[:,i])) for i=1:n))
     end
 
     ℱ(ρ1, ρ2) = square(tr(sqrt(sqrt(ρ1)*ρ2*sqrt(ρ1))))
