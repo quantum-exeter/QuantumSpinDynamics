@@ -11,7 +11,7 @@ module RCLib
     ####################################
 
     ### Exports ###
-    export ωL, ρ0, 𝒮, sx0, sy0, sz0, 𝕀b, gibbs, HSp1D, HRC1D, HSp2D, HRC2D, ptrace, ℱ
+    export ωL, ρ0, 𝒮, sx0, sy0, sz0, 𝕀b, gibbs, HSpG, HRC1D, HRC2D, HRC3D, ptrace, ℱ
 
     ### Variables ###
     γ = -1.76*10^(11) # Gyromagnetic ratio for an electron (T^-1s^-1)
@@ -53,15 +53,16 @@ module RCLib
     end
 
     # RC #
-    function gibbs(H, n, T)
+    function gibbs(H, T)
+        n = size(H,1)
         ϵ = eigvals(H)
         𝒵 = sum(exp(-(cfac*ϵ[i])/T) for i = 1:n)
         return (1/𝒵)*Diagonal([exp(-(cfac*ϵ[i])/T) for i = 1:n])
     end
 
     # Joint Initital State #
-    ρ0(θ, ϕ, H, n, T) = kronecker(bloch_state(θ, ϕ), thermal_state(H, n, T))
-    ρ02D(θ, ϕ, nx, ny, ω0x, ω0y, Tx, Ty) = kronecker(bloch_state(θ, ϕ), thermal_state(nx, ω0x, Tx), thermal_state(ny, ω0y, Ty))
+    ρ0(θ, ϕ, H, T) = kronecker(bloch_state(θ, ϕ), gibbs(H, T))
+    ρ02D(θ, ϕ, H, Tx, Ty) = kronecker(bloch_state(θ, ϕ), gibbs(H, Tx), gibbs(H, Ty))
 
     ### Creation and Annihilation Operators ###
     function create(n)
@@ -84,20 +85,25 @@ module RCLib
         return adjoint(create(n))
     end
 
-    ### 1D Spin Hamiltonian ###
-    HSp1D(n) = -sign(γ)*kronecker(sz0, 𝕀b(n))
+    ### Gibbs Spin Hamiltonian ###
+    HSpG(n) = -sign(γ)*kronecker(sz0, 𝕀b(n))
 
     ### 1D RC Hamiltonian ###
     HRC1D(n, λ, Ω) = -sign(γ)*kronecker(sz0, 𝕀b(n)) + (λ/ωL)*kronecker(sx0, (create(n) + annihilate(n))) + kronecker(𝕀s, (Ω/ωL)*(create(n)*annihilate(n)))
-
-    ### 2D Spin Hamiltonian ###
-    HSp2D(nx, nz) = -sign(γ)*kronecker(sz0, 𝕀b(nx), 𝕀b(nz))
 
     ### 2D RC Hamiltonian ###
     function HRC2D(nx, nz, λx, λz, Ωx, Ωz)
         spin = -sign(γ)*kronecker(sz0, 𝕀b(nx), 𝕀b(nz))
         rc = kronecker(𝕀s, (Ωx/ωL)*(create(nx)*annihilate(nx)), 𝕀b(nz)) + kronecker(𝕀s, 𝕀b(nx), (Ωz/ωL)*(create(nz)*annihilate(nz)))
         int = (λx/ωL)*kronecker(sx0, (create(nx) + annihilate(nx)), 𝕀b(nz)) + (λz/ωL)*kronecker(sz0, 𝕀b(nx), (create(nz) + annihilate(nz)))
+        return(spin + rc + int)
+    end
+
+    ### 3D RC Hamiltonian ###
+    function HRC3D(nx, ny, nz, λx, λy, λz, Ωx, Ωy, Ωz)
+        spin = -sign(γ)*kronecker(sz0, 𝕀b(nx), 𝕀b(ny), 𝕀b(nz))
+        rc = kronecker(𝕀s, (Ωx/ωL)*(create(nx)*annihilate(nx)), 𝕀b(ny), 𝕀b(nz)) + kronecker(𝕀s, 𝕀b(nx), (Ωy/ωL)*(create(ny)*annihilate(ny)), 𝕀b(nz)) + kronecker(𝕀s, 𝕀b(nx), 𝕀b(ny), (Ωz/ωL)*(create(nz)*annihilate(nz)))
+        int = (λx/ωL)*kronecker(sx0, (create(nx) + annihilate(nx)), 𝕀b(ny), 𝕀b(nz)) + (λy/ωL)*kronecker(sy0, 𝕀b(nx), (create(ny) + annihilate(ny)), 𝕀b(nz)) + (λz/ωL)*kronecker(sz0, 𝕀b(nx), 𝕀b(ny), (create(nz) + annihilate(nz)))
         return(spin + rc + int)
     end
 
@@ -126,7 +132,7 @@ module RCLib
     ### Spectral Density ###
     spectral_density(ω, δ) = δ*ω*(Λ^2/(ω^2 + Λ^2))
 
-    ### Redfield (RF) Equation ###
+    ### Dynamics ###
 
     # Iles-Smith RC ME Parameters
     function χop(n, Ω, λ, δ, T)
@@ -163,11 +169,6 @@ module RCLib
     end
 
     ### HMF Calculations ###
-    function gibbs(H, T)
-        𝒵 = tr(exp(-(cfac*H/T)))
-        return((1/𝒵)*exp(-(cfac*H/T)))
-    end
-
     function ptrace(ρ, n)
         nR = int(size(ρ, 1)/n)
         return(sum(((𝕀b(nR)⊗𝕀b(n)[[i],:])*ρ*(𝕀b(nR)⊗𝕀b(n)[:,i])) for i=1:n))
