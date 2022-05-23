@@ -11,7 +11,7 @@ module RCLib
     ####################################
 
     ### Exports ###
-    export ωL, ρ0, 𝒮, sx0, sy0, sz0, 𝕀b, gibbs, HSpG, HRC1D, HRC2D, HRC3D, ptrace, ℱ
+    export ωL, ρ0, 𝒮, sx0, sy0, sz0, 𝕀b, gibbs, HSpG, HRC1D, HRC2D, HRC3D, ptrace, ℱ, pred
 
     ### Variables ###
     γ = -1.76*10^(11) # Gyromagnetic ratio for an electron (T^-1s^-1)
@@ -175,5 +175,7 @@ module RCLib
     end
 
     ℱ(ρ1, ρ2) = square(tr(sqrt(sqrt(ρ1)*ρ2*sqrt(ρ1))))
+
+    pred(T) = coth(cfac/(2*T)) - (2*T)/cfac
 
 end
