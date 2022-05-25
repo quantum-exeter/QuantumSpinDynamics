@@ -86,7 +86,7 @@ module RCLib
     end
 
     ### Gibbs Spin Hamiltonian ###
-    HSpG(n) = -sign(γ)*kronecker(sz0, 𝕀b(n))
+    HSpG(n) = -sign(γ)*sz0
 
     ### 1D RC Hamiltonian ###
     HRC1D(n, λ, Ω) = -sign(γ)*kronecker(sz0, 𝕀b(n)) + (λ/ωL)*kronecker(sx0, (create(n) + annihilate(n))) + kronecker(𝕀s, (Ω/ωL)*(create(n)*annihilate(n)))
@@ -169,13 +169,17 @@ module RCLib
     end
 
     ### HMF Calculations ###
+
+    # Partial Trace
     function ptrace(ρ, n)
         nR = int(size(ρ, 1)/n)
         return(sum(((𝕀b(nR)⊗𝕀b(n)[[i],:])*ρ*(𝕀b(nR)⊗𝕀b(n)[:,i])) for i=1:n))
     end
 
+    # Uhlmann Fidelity
     ℱ(ρ1, ρ2) = square(tr(sqrt(sqrt(ρ1)*ρ2*sqrt(ρ1))))
 
+    # Classical 3D Gibbs/MFGS S_z Function
     pred(T) = coth(cfac/(2*T)) - (2*T)/cfac
 
 end
