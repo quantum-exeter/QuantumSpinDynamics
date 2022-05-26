@@ -11,7 +11,7 @@ module RCLib
     ####################################
 
     ### Exports ###
-    export ωL, ρ0, 𝒮, sx0, sy0, sz0, 𝕀b, gibbs, HSpG, HRC1D, HRC2D, HRC3D, ptrace, ℱ, pred
+    export ωL, ρ0, 𝒮, sx0, sy0, sz0, 𝕀b, gibbs, HSpG, HRC1D, HRCT, HRC2D, HRC3D, ptrace, ℱ, pred
 
     ### Variables ###
     γ = -1.76*10^(11) # Gyromagnetic ratio for an electron (T^-1s^-1)
@@ -55,14 +55,15 @@ module RCLib
     # RC #
     function gibbs(H, T)
         n = size(H,1)
-        ϵ = eigvals(H)
+        ϵ = eigen(H).values
+        P = eigen(H).vectors
         𝒵 = sum(exp(-(cfac*ϵ[i])/T) for i = 1:n)
-        return (1/𝒵)*Diagonal([exp(-(cfac*ϵ[i])/T) for i = 1:n])
+        ρ = (1/𝒵)*Diagonal([exp(-(cfac*ϵ[i])/T) for i = 1:n])
+        return P*ρ*adjoint(P)
     end
 
     # Joint Initital State #
     ρ0(θ, ϕ, H, T) = kronecker(bloch_state(θ, ϕ), gibbs(H, T))
-    ρ02D(θ, ϕ, H, Tx, Ty) = kronecker(bloch_state(θ, ϕ), gibbs(H, Tx), gibbs(H, Ty))
 
     ### Creation and Annihilation Operators ###
     function create(n)
@@ -86,7 +87,7 @@ module RCLib
     end
 
     ### Gibbs Spin Hamiltonian ###
-    HSpG(n) = -sign(γ)*sz0
+    HSpG = -sign(γ)*sz0
 
     ### 1D RC Hamiltonian ###
     HRC1D(n, λ, Ω) = -sign(γ)*kronecker(sz0, 𝕀b(n)) + (λ/ωL)*kronecker(sx0, (create(n) + annihilate(n))) + kronecker(𝕀s, (Ω/ωL)*(create(n)*annihilate(n)))
@@ -173,7 +174,7 @@ module RCLib
     # Partial Trace
     function ptrace(ρ, n)
         nR = int(size(ρ, 1)/n)
-        return(sum(((𝕀b(nR)⊗𝕀b(n)[[i],:])*ρ*(𝕀b(nR)⊗𝕀b(n)[:,i])) for i=1:n))
+        return(sum((𝕀b(nR)⊗(𝕀b(n)[[i],:]))*ρ*(𝕀b(nR)⊗(𝕀b(n)[:,i])) for i=1:n))
     end
 
     # Uhlmann Fidelity
