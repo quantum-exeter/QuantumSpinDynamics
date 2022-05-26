@@ -11,7 +11,7 @@ module RCLib
     ####################################
 
     ### Exports ###
-    export ωL, ρ0, 𝒮, sx0, sy0, sz0, 𝕀b, gibbs, HSpG, HRC1D, HRCT, HRC2D, HRC3D, ptrace, ℱ, pred
+    export ωL, ρ0, 𝒮, sx0, sy0, sz0, 𝕀b, gibbs, HSpG, HRC1D, HRC2D, HRC3D, ptrace, ℱ, pred
 
     ### Variables ###
     γ = -1.76*10^(11) # Gyromagnetic ratio for an electron (T^-1s^-1)
@@ -63,7 +63,11 @@ module RCLib
     end
 
     # Joint Initital State #
-    ρ0(θ, ϕ, H, T) = kronecker(bloch_state(θ, ϕ), gibbs(H, T))
+    function ρ0(θ, ϕ, Ω, n, T)
+        H_bath = ((Ω/ωL)*(create(n)*annihilate(n)))
+        thermal_state = gibbs(H_bath, T)
+        return kronecker(bloch_state(θ, ϕ), thermal_state)
+    end
 
     ### Creation and Annihilation Operators ###
     function create(n)
