@@ -11,7 +11,7 @@ module RCLib
     ####################################
 
     ### Exports ###
-    export ωL, ρ0, 𝒮, sx0, sy0, sz0, 𝕀b, gibbs, HSpG, HRC1D, HRC2D, HRC3D, ptrace, ℱ, pred
+    export ωL, real_if_close, ρ0, 𝒮, sx0, sy0, sz0, 𝕀b, gibbs, HSpG, HRC1D, HRC2D, HRC3D, ptrace, ℱ, pred
 
     ### Variables ###
     γ = -1.76*10^(11) # Gyromagnetic ratio for an electron (T^-1s^-1)
@@ -37,6 +37,10 @@ module RCLib
 
     # Make Integer
     int(x) = floor(Int, x)
+
+    # Check Size Im Parts
+    real_if_close(c) = isnan(imag(c)) || imag(c) < 1e-14 ? real(c) : c
+    real_if_close(c::AbstractArray) = real_if_close.(c)
 
     ### Initial States ###
 
