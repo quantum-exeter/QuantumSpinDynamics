@@ -44,9 +44,9 @@ module Statics
     ## Ground State ##
     function ground_state(H, n)
         state = eigen(H).vectors[:,1]
-        sx = -adjoint(state)*kronecker(sx0, 𝕀(n))*state
-        sy = -adjoint(state)*kronecker(sy0, 𝕀(n))*state
-        sz = -adjoint(state)*kronecker(sz0, 𝕀(n))*state
+        sx = adjoint(state)*kronecker(sx0, 𝕀(n))*state
+        sy = adjoint(state)*kronecker(sy0, 𝕀(n))*state
+        sz = adjoint(state)*kronecker(sz0, 𝕀(n))*state
         return [sx sy sz]
     end
 
