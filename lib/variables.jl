@@ -12,7 +12,7 @@ prma = [1.4 0 10]
 prmb = [7 0 50]
 prmc = [0.014 0 0.1]
 prmd = [1.4 0 1000]
-prm = prma;
+prm = prma; # Change the RHS here to change parameter set
 
 ω01, Γ1, α1 = prm*ωL
 ω02, Γ2, α2 = prm*ωL

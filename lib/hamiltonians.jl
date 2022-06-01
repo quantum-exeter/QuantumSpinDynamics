@@ -23,10 +23,11 @@ function annihilate(n)
 end
 
 ### Hamiltonians ###
+
+## Bare Spin Hamiltonian ##
 HG() = -sign(γ)*sz0
 
 ## 1D RC Hamiltonian ##
-
 function HRC1D(n1, λ1, Ω1)
     spin = -sign(γ)*kronecker(sz0, 𝕀(n1))
     rc = kronecker(𝕀s, (Ω1/ωL)*(create(n1)*annihilate(n1)))
@@ -35,8 +36,6 @@ function HRC1D(n1, λ1, Ω1)
 end
 
 ## 2D RC Hamiltonian ##
-
-# xz-Coupling #
 function HRC2D(n1, n2, λ1, λ2, Ω1, Ω2)
     spin = -sign(γ)*kronecker(sz0, 𝕀(n1), 𝕀(n2))
     rc = kronecker(𝕀s, (Ω1/ωL)*(create(n1)*annihilate(n1)), 𝕀(n2)) + kronecker(𝕀s, 𝕀(n1), (Ω2/ωL)*(create(n2)*annihilate(n2)))

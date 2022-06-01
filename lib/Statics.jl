@@ -21,6 +21,8 @@ module Statics
     
     ### Statics-Specific Functions ###
 
+
+    ## Mean-Force Gibbs State (MFGS) ##
     function MFGS(H, T, n)
         proj = eigen(H).vectors
         hT = adjoint(proj)*H*proj
@@ -33,6 +35,7 @@ module Statics
     ρMFGS2D(T) = MFGS(HRC2D(n1, n2, λ1, λ2, Ω1, Ω2), T, n1*n2)
     ρMFGS3D(T) = MFGS(HRC3D(n1, n2, n3, λ1, λ2, λ3, Ω1, Ω2, Ω3), T, n1*n2*n3)
 
+    # Spin Expectations #
     sG(T) = exps(ρG(T))
     s1D(T) = exps(ρMFGS1D(T))
     s2D(T) = exps(ρMFGS2D(T))
@@ -47,6 +50,7 @@ module Statics
         return [sx sy sz]
     end
 
+    # Spin Expectations #
     gs1D = ground_state(HRC1D(n1, λ1, Ω1), n1)
     gs2D = ground_state(HRC2D(n1, n2, λ1, λ2, Ω1, Ω2), n1*n2)
     gs3D = ground_state(HRC3D(n1, n2, n3, λ1, λ2, λ3, Ω1, Ω2, Ω3), n1*n2*n3)
