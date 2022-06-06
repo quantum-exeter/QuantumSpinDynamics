@@ -1,3 +1,7 @@
+###########################
+#### initial_States.jl ####
+###########################
+
 ### Spins ###
 
 ## Pauli Matrices ##
@@ -12,7 +16,7 @@ sz0 = 0.5*σz
 
 ## Spin Coupling Operators ##
 # The {θ, ϕ}[i] pairs set the direction of coupling in the ith direction #
-function sc0(i)
+function sc(i)
     θ = [π/2 0 π/2]
     ϕ = [0 0 π/2]
     return sx0*(sin(θ[i])*cos(ϕ[i])) + sy0*(sin(θ[i])*sin(ϕ[i])) + sz0*cos(θ[i])
@@ -20,7 +24,9 @@ end
 
 ## Bloch State ##
 # This sets the initial state of the spin on the Bloch sphere, defined by the polar angle α and azimuth β #
-function bloch_state(α, β)
+function bloch_state()
+    α = -π/2
+    β = 0
     return [cos(α/2)^2 0.5*exp(-im*β)*sin(α); 0.5*exp(im*β)*sin(α) sin(α/2)^2]
 end
 
@@ -36,9 +42,15 @@ function gibbs(H, T)
     return P*ρ*adjoint(P)
 end
 
-### Joint Initital State ###
-function ρ0(α, β, Ω, n, T)
-    H_bath = ((Ω/ωL)*(create(n)*annihilate(n)))
-    thermal_state = gibbs(H_bath, T)
-    return kronecker(bloch_state(α, β), thermal_state)
+### Joint Initital States ###
+function ρ0(dim)
+    if dim == 1
+        return kronecker(bloch_state(), gibbs(HB(n1, Ω1), TDyn))
+    elseif dim == 2
+        return kronecker(bloch_state(), gibbs(HB(n1, Ω1), TDyn), gibbs(HB(n2, Ω2), TDyn))
+    elseif dim == 3
+        return kronecker(bloch_state(), gibbs(HB(n1, Ω1), TDyn), gibbs(HB(n2, Ω2), TDyn), gibbs(HB(n3, Ω3), TDyn))
+    else
+        print("Please return a dimension of either 1, 2 or 3.")
+    end
 end

@@ -1,1 +1,0 @@
-exps(ρ) = [tr(ρ*sx0) tr(ρ*sy0) tr(ρ*sz0)]
