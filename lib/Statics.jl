@@ -16,8 +16,8 @@ module Statics
     ####################################
 
     ### Exports ###
-    export ρG, ρMFGS, sG, sMFGS, ground_state, 
-           real_if_close,
+    export ρG, ρMFGS, sG, sMFGS, groundState, szAnalytical,
+           realIfClose,
            T
     
     ### Statics-Specific Functions ###
@@ -41,7 +41,7 @@ module Statics
     sMFGS(dim, T) = exps(ρMFGS(dim, T))
 
     ## Ground State ##
-    function ground_state(dim)
+    function groundState(dim)
         H = HS(dim)
         n = Int(hspace_dimension(dim)/2)
         state = eigen(H).vectors[:,1]
@@ -50,5 +50,9 @@ module Statics
         sz = adjoint(state)*kronecker(sz0, 𝕀(n))*state
         return [sx sy sz]
     end
+
+    ## Sz Coupling Analytical Expression ##
+
+    szAnalytical(T) = -tanh(cfac/(2*T))
 
 end

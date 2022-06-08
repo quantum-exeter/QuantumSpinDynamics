@@ -17,8 +17,18 @@ sz0 = 0.5*σz
 ## Spin Coupling Operators ##
 # The {θ, ϕ}[i] pairs set the direction of coupling in the ith direction #
 function sc(i)
-    θ = [π/2 0 π/2]
-    ϕ = [0 0 π/2]
+    # θ = [π/2-0.5 0 0] # Coupling direction 1, 2 and 3
+    # ϕ = [0 0 0] # Coupling direction 1, 2 and 3 
+    # # 1D x - Coupling ##
+    # θ = [π/2 0 0]
+    # ϕ = [0 0 0]
+    # # 1D y - Coupling ##
+    # θ = [π/2 0 0]
+    # ϕ = [π/2 0 0] 
+    # 1D z- Coupling ##
+    θ = [0 0 0]
+    ϕ = [0 0 0]
+
     return sx0*(sin(θ[i])*cos(ϕ[i])) + sy0*(sin(θ[i])*sin(ϕ[i])) + sz0*cos(θ[i])
 end
 

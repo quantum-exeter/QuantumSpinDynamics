@@ -25,5 +25,5 @@ end
 fidelity(ρ1, ρ2) = square(tr(sqrt(sqrt(ρ1)*ρ2*sqrt(ρ1))))
 
 ### Check for Choppable Components ###
-real_if_close(c) = isnan(imag(c)) || imag(c) < 1e-14 ? real(c) : c;
-real_if_close(c::AbstractArray) = real_if_close.(c);
+realIfClose(c) = isnan(imag(c)) || imag(c) < 1e-14 ? real(c) : c;
+realIfClose(c::AbstractArray) = realIfClose.(c);
