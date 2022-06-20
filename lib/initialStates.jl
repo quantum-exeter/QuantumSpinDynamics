@@ -9,27 +9,23 @@
 σy = [[0 -im];[im 0]]
 σz = [[1 0];[0 -1]]
 
-## Spin Operators ##
-sx0 = 0.5*σx
-sy0 = 0.5*σy
-sz0 = 0.5*σz
+scale = 2;
 
 ## Spin Coupling Operators ##
 # The {θ, ϕ}[i] pairs set the direction of coupling in the ith direction #
 function sc(i)
-    # θ = [π/2-0.5 0 0] # Coupling direction 1, 2 and 3
-    # ϕ = [0 0 0] # Coupling direction 1, 2 and 3 
+    θ = [π/2 0 0] # Coupling direction 1, 2 and 3
+    ϕ = [0 0 0] # Coupling direction 1, 2 and 3 
     # # 1D x - Coupling ##
     # θ = [π/2 0 0]
     # ϕ = [0 0 0]
     # # 1D y - Coupling ##
     # θ = [π/2 0 0]
     # ϕ = [π/2 0 0] 
-    # 1D z- Coupling ##
-    θ = [0 0 0]
-    ϕ = [0 0 0]
-
-    return sx0*(sin(θ[i])*cos(ϕ[i])) + sy0*(sin(θ[i])*sin(ϕ[i])) + sz0*cos(θ[i])
+    # # 1D z- Coupling ##
+    # θ = [0 0 0]
+    # ϕ = [0 0 0]
+    return σx*(sin(θ[i])*cos(ϕ[i])) + σy*(sin(θ[i])*sin(ϕ[i])) + σz*cos(θ[i])
 end
 
 ## Bloch State ##
@@ -44,11 +40,11 @@ end
 
 ## Thermal Initial State ##
 function gibbs(H, T)
-    n = size(H,1)
+    n = size(H, 1)
     ϵ = eigen(H).values
     P = eigen(H).vectors
-    𝒵 = sum(exp(-(cfac*ϵ[i])/T) for i = 1:n)
-    ρ = (1/𝒵)*Diagonal([exp(-(cfac*ϵ[i])/T) for i = 1:n])
+    𝒵 = sum(exp(-ϵ[i]/T) for i = 1:n)
+    ρ = (1/𝒵)*Diagonal([exp(-ϵ[i]/T) for i = 1:n])
     return P*ρ*adjoint(P)
 end
 
