@@ -16,9 +16,7 @@ module Statics
     ####################################
 
     ### Exports ###
-    export ρG, ρMFGS, sG, sMFGS, groundState, szAnalytical,
-           realIfClose,
-           T
+    export ρG, ρMFGS, sG, sMFGS, groundState, szAnalytical, realIfClose, T
     
     ### Statics-Specific Functions ###
 
@@ -36,7 +34,7 @@ module Statics
     end
 
     # Spin Expectations #
-    exps(ρ) = [tr(ρ*sx0) tr(ρ*sy0) tr(ρ*sz0)]
+    exps(ρ) = [tr(ρ*σx) tr(ρ*σy) tr(ρ*σz)]
     sG(T) = exps(ρG(T))
     sMFGS(dim, T) = exps(ρMFGS(dim, T))
 
@@ -45,14 +43,14 @@ module Statics
         H = HS(dim)
         n = Int(hspace_dimension(dim)/2)
         state = eigen(H).vectors[:,1]
-        sx = adjoint(state)*kronecker(sx0, 𝕀(n))*state
-        sy = adjoint(state)*kronecker(sy0, 𝕀(n))*state
-        sz = adjoint(state)*kronecker(sz0, 𝕀(n))*state
+        sx = adjoint(state)*kronecker(σx, 𝕀(n))*state
+        sy = adjoint(state)*kronecker(σy, 𝕀(n))*state
+        sz = adjoint(state)*kronecker(σz, 𝕀(n))*state
         return [sx sy sz]
     end
 
     ## Sz Coupling Analytical Expression ##
 
-    szAnalytical(T) = -tanh(cfac/(2*T))
+    szAnalytical(T) = -tanh(1/T)
 
 end
