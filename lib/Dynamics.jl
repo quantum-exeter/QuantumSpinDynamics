@@ -3,7 +3,6 @@ module Dynamics
     ### Import Packages ###
     using LinearAlgebra
     using Kronecker
-    using SparseArrays
 
     ### Inclusions ###
     include("constants.jl")
@@ -85,20 +84,18 @@ module Dynamics
         len(i) = length(transitions_list(i)[1]) # Find the length of list (for each bath) to iterate over
         ωb(i) = transitions_list(i)[1] # Rewrite function outputs (Bohr freqs) in more compact form
         ATr(i) = transitions_list(i)[2] # Rewrite function outputs (transformed jump ops) in more compact form
-        ATot(i) = sum(ATr(i)[j] for j in len(i)) # Define the sum of all jump operators for each bath
+        ATot(i) = sum(ATr(i)[j] for j = 1:len(i)) # Define the sum of all jump operators for each bath
 
         ## Iles-Smith Superoperators ##
-        χ(i) = (π/2)*sum(spectral_density(ωb(i)[j], δ_list(i))*coth((ωb(i)[j])/(2*TDyn))*ATr(i)[j] for j in len(i)) # Iles-Smith χ superoperator
-        Θ(i) = (π/2)*sum(spectral_density(ωb(i)[j], δ_list(i))*ATr(i)[j] for j in len(i)) # Iles-Smith Θ superoperator
+        χ(i) = (π/2)*sum(spectral_density(ωb(i)[j], δ_list(i))*coth((ωb(i)[j])/(2*TDyn))*ATr(i)[j] for j = 1:len(i)) # Iles-Smith χ superoperator
+        Θ(i) = (π/2)*sum(spectral_density(ωb(i)[j], δ_list(i))*ATr(i)[j] for j = 1:len(i)) # Iles-Smith Θ superoperator
 
         ## Left/Right Multiplication Superoperators ##
         ℒ(operator) = kronecker(operator, 𝕀(n)) # Define the left multiplication superoperator
         ℛ(operator) = kronecker(𝕀(n), transpose(operator)) # Define the right multiplication superoperator
 
         ## Return the Superoperator ##
-        out = sum(-im*(ℒ(H) - ℛ(H)) - ℒ(ATot(i))*(ℒ(χ(i)) - ℛ(χ(i))) + ℛ(ATot(i))*(ℒ(χ(i)) - ℛ(χ(i))) + ℒ(ATot(i))*(ℒ(Θ(i)) + ℛ(Θ(i))) - ℛ(ATot(i))*(ℒ(Θ(i)) + ℛ(Θ(i))) for i in dim)
-
-        return sparse(out)
+        return sum(-im*(ℒ(H) - ℛ(H)) - ℒ(ATot(i))*(ℒ(χ(i)) - ℛ(χ(i))) + ℛ(ATot(i))*(ℒ(χ(i)) - ℛ(χ(i))) + ℒ(ATot(i))*(ℒ(Θ(i)) + ℛ(Θ(i))) - ℛ(ATot(i))*(ℒ(Θ(i)) + ℛ(Θ(i))) for i in 1:dim)
 
     end
 
