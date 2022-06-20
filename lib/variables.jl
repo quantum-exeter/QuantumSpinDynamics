@@ -13,14 +13,15 @@ include("constants.jl")
 T = exp10.(range(-3, 3, length=100));
 
 ### Dynamics ###
-TDyn = 10;
+
+TDyn = 1
 
 ### Parameter Sets ###
-prma = [1.4 0 10]
+prma = [1.4 0.001 10]
 prmb = [7 0 50]
 prmc = [0.014 0 0.1]
 prmd = [1.4 0 10000]
-prme = [2 0.0001 10]
+prme = [2 0.001 10]
 
 prm1 = prme; # Change the RHS here to change parameter set for coupling direction 1
 prm2 = prme; # Change the RHS here to change parameter set for coupling direction 2
