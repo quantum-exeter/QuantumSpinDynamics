@@ -3,8 +3,7 @@ module Dynamics
     ### Import Packages ###
     using LinearAlgebra
     using Kronecker
-    using OrdinaryDiffEq
-    using DifferentialEquations
+    using SparseArrays
 
     ### Inclusions ###
     include("constants.jl")
@@ -19,14 +18,9 @@ module Dynamics
     ####################################
 
     ### Exports ###
-    export ρ, sDyn,
-           real_if_close,
-           t
+    export 𝒮, ρ0, hspace_dimension, σx, σy, σz, 𝕀, realIfClose
     
     ### Dynamics-Specific Functions ###
-
-    ## Algorithm for Solving DE ##
-    alg = Vern7()
 
     ## Transition Frequencies and Jump Operators ##
 
@@ -94,7 +88,7 @@ module Dynamics
         ATot(i) = sum(ATr(i)[j] for j in len(i)) # Define the sum of all jump operators for each bath
 
         ## Iles-Smith Superoperators ##
-        χ(i) = (π/2)*sum(spectral_density(ωb(i)[j], δ_list(i))*coth((cfac*ωb(i)[j])/(2*TDyn))*ATr(i)[j] for j in len(i)) # Iles-Smith χ superoperator
+        χ(i) = (π/2)*sum(spectral_density(ωb(i)[j], δ_list(i))*coth((ωb(i)[j])/(2*TDyn))*ATr(i)[j] for j in len(i)) # Iles-Smith χ superoperator
         Θ(i) = (π/2)*sum(spectral_density(ωb(i)[j], δ_list(i))*ATr(i)[j] for j in len(i)) # Iles-Smith Θ superoperator
 
         ## Left/Right Multiplication Superoperators ##
@@ -102,25 +96,10 @@ module Dynamics
         ℛ(operator) = kronecker(𝕀(n), transpose(operator)) # Define the right multiplication superoperator
 
         ## Return the Superoperator ##
-        return sum(-im*(ℒ(H) - ℛ(H)) - ℒ(ATot(i))*(ℒ(χ(i)) - ℛ(χ(i))) + ℛ(ATot(i))*(ℒ(χ(i)) - ℛ(χ(i))) + ℒ(ATot(i))*(ℒ(Θ(i)) + ℛ(Θ(i))) - ℛ(ATot(i))*(ℒ(Θ(i)) + ℛ(Θ(i))) for i in dim)
+        out = sum(-im*(ℒ(H) - ℛ(H)) - ℒ(ATot(i))*(ℒ(χ(i)) - ℛ(χ(i))) + ℛ(ATot(i))*(ℒ(χ(i)) - ℛ(χ(i))) + ℒ(ATot(i))*(ℒ(Θ(i)) + ℛ(Θ(i))) - ℛ(ATot(i))*(ℒ(Θ(i)) + ℛ(Θ(i))) for i in dim)
 
-    end
+        return sparse(out)
 
-    ## Differential Equation Solver ##
-    function ρ(dim)
-        superop = 𝒮(dim)
-        state_init = ρ0(dim)
-        dstate(dρ, ρ, v, t) = mul!(dρ, superop, ρ) # Solves the DE
-        prob = ODEProblem(dstate, vec(state_init), tspan)
-        out = solve(prob, alg)
-        sol(t) = reshape(out(t), (hspace_dimension(dim), hspace_dimension(dim))) # Reformats vector into a density matrix
-        return sol
-    end
-
-    ## Spin Expectation Values ##
-    function sDyn(dim, t)
-        n = Int(hspace_dimension(dim)/2)
-        return [tr(ρ(dim)(t)*kronecker(sx0, 𝕀(n))) tr(ρ(dim)(t)*kronecker(sy0, 𝕀(n))) tr(ρ(dim)(t)*kronecker(sz0, 𝕀(n)))]
     end
 
 end
