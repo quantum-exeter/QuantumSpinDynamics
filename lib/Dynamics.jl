@@ -95,7 +95,7 @@ module Dynamics
         ℛ(operator) = kronecker(𝕀(n), transpose(operator)) # Define the right multiplication superoperator
 
         ## Return the Superoperator ##
-        return sum(-im*(ℒ(H) - ℛ(H)) - ℒ(ATot(i))*(ℒ(χ(i)) - ℛ(χ(i))) + ℛ(ATot(i))*(ℒ(χ(i)) - ℛ(χ(i))) + ℒ(ATot(i))*(ℒ(Θ(i)) + ℛ(Θ(i))) - ℛ(ATot(i))*(ℒ(Θ(i)) + ℛ(Θ(i))) for i in 1:dim)
+        return -im*(ℒ(H) - ℛ(H)) + sum(- ℒ(ATot(i))*(ℒ(χ(i)) - ℛ(χ(i))) + ℛ(ATot(i))*(ℒ(χ(i)) - ℛ(χ(i))) + ℒ(ATot(i))*(ℒ(Θ(i)) + ℛ(Θ(i))) - ℛ(ATot(i))*(ℒ(Θ(i)) + ℛ(Θ(i))) for i in 1:dim)
 
     end
 
