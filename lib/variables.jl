@@ -2,10 +2,10 @@
 #### variables.jl ####
 ######################
 
-include("constants.jl")
-
-### Timescales ###
-
+γ = -1.76*10^(11) # Gyromagnetic ratio for an electron (T^-1s^-1)
+Bext = 10 # External magnetic field (T)
+ωL = abs(γ)*Bext # Larmor frequency (s^-1)
+Λ = 10^10 # Cutoff frequency for spectral density
 
 ### Temperatures ###
 
@@ -22,6 +22,8 @@ prmb = [7 0 50]
 prmc = [0.014 0 0.1]
 prmd = [1.4 0 10000]
 prme = [2 0.001 10]
+prmf = [2 0.001 1]
+prmg = [2 0.001 50]
 
 prm1 = prme; # Change the RHS here to change parameter set for coupling direction 1
 prm2 = prme; # Change the RHS here to change parameter set for coupling direction 2
@@ -36,7 +38,7 @@ prm3 = prme; # Change the RHS here to change parameter set for coupling directio
 Ω1, Ω2, Ω3 = [ω01 ω02 ω03]
 λ1, λ2, λ3 = ωL*[sqrt(α1/Ω1) sqrt(α2/Ω2) sqrt(α3/Ω3)]
 δ1, δ2, δ3 = [Γ1/ωL Γ2/ωL Γ3/ωL]
-n1, n2, n3 = [5 1 1] # Change the number of RC levels here
+n1, n2, n3 = [3 3 1] # Change the number of RC levels here
 
 δ_list(dim) = [δ1 δ2 δ3][dim] # List of dissipation strengths for Dynamics.jl module
 hspace_dimension(dim) = [2*n1 2*n1*n2 2*n1*n2*n3][dim] # List of Hilbert space dimensions
