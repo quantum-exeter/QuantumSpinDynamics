@@ -5,7 +5,6 @@ module Statics
     using Kronecker
 
     ### Inclusions ###
-    include("constants.jl")
     include("variables.jl")
     include("maths.jl")
     include("initialStates.jl")
