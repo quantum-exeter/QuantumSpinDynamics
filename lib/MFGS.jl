@@ -1,4 +1,4 @@
-module Statics
+module MFGS
 
     ### Import Packages ###
     using LinearAlgebra
@@ -7,7 +7,7 @@ module Statics
     ### Inclusions ###
     include("variables.jl")
     include("maths.jl")
-    include("initialStates.jl")
+    include("states.jl")
     include("hamiltonians.jl")
 
     ####################################
