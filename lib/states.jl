@@ -19,8 +19,8 @@ function ρMFGS(prm::Lorentzian, ang::CouplingAngles, n::Levels, T)
     H = HTot(prm, ang, n) # Hamiltonian for the given coupling dimension
     proj = eigen(H).vectors # Projector onto the basis of H
     HTr = adjoint(proj)*H*proj # Transformed H
-    stateTot = proj*gibbs(HTr, T)*adjoint(proj)
-    ntr = Int(dim(n)/2)
+    stateTot = proj*thermal(HTr, T)*adjoint(proj)
+    ntr = Int(hspace_size(n)/2)
     return ptrace(stateTot, ntr)
 end
 
