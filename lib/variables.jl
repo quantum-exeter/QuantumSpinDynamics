@@ -2,43 +2,86 @@
 #### variables.jl ####
 ######################
 
-γ = -1 # Gyromagnetic ratio for an electron (T^-1s^-1)
-Bext = 10 # External magnetic field (T)
-ωL = abs(γ)*Bext # Larmor frequency (s^-1)
+γ = -1 # Gyromagnetic ratio for an electron
 Λ = 10^10 # Cutoff frequency for spectral density
+s0 = 1/2 # Spin size
 
-### Temperatures ###
+### Lorentzian Parameters ###
+abstract type Lorentzian end
 
-### Statics ###
-T = exp10.(range(-3, 3, length=100));
+struct LorPrm1D{T <: Real} <: Lorentzian
+    ω01::T
+    Γ1::T
+    α1::T
+end
 
-### Dynamics ###
+struct LorPrm2D{T <: Real} <: Lorentzian
+    ω01::T
+    Γ1::T
+    α1::T
+    ω02::T
+    Γ2::T
+    α2::T
+end
 
-TDyn = 1
+struct LorPrm3D{T <: Real} <: Lorentzian
+    ω01::T
+    Γ1::T
+    α1::T
+    ω02::T
+    Γ2::T
+    α2::T
+    ω03::T
+    Γ3::T
+    α3::T
+end
 
-### Parameter Sets ###
-prma = [1.4 0.001 10]
-prmb = [7 0 50]
-prmc = [0.014 0 0.1]
-prmd = [1.4 0 10000]
-prme = [2 0.001 10]
-prmf = [2 0.001 1]
-prmg = [2 0.001 50]
+### Truncation of Harmonic Oscillator ###
+abstract type Levels end
 
-prm1 = prme; # Change the RHS here to change parameter set for coupling direction 1
-prm2 = prme; # Change the RHS here to change parameter set for coupling direction 2
-prm3 = prme; # Change the RHS here to change parameter set for coupling direction 3
+struct Lev1D <: Levels
+    n1::Int
+end
 
-ω01, Γ1, α1 = prm1
-ω02, Γ2, α2 = prm2
-ω03, Γ3, α3 = prm3
+struct Lev2D <: Levels
+    n1::Int
+    n2::Int
+end
 
-### RC-Specific Parameters ###
+struct Lev3D <: Levels
+    n1::Int
+    n2::Int
+    n3::Int
+end
 
-Ω1, Ω2, Ω3 = [ω01 ω02 ω03]
-λ1, λ2, λ3 = [sqrt(α1/Ω1) sqrt(α2/Ω2) sqrt(α3/Ω3)]
-δ1, δ2, δ3 = [Γ1 Γ2 Γ3]
-n1, n2, n3 = [3 3 1] # Change the number of RC levels here
+### Coupling Angles ###
+abstract type CouplingAngles end
 
-δ_list(dim) = [δ1 δ2 δ3][dim] # List of dissipation strengths for Dynamics.jl module
-hspace_dimension(dim) = [2*n1 2*n1*n2 2*n1*n2*n3][dim] # List of Hilbert space dimensions
+struct CouplAng1D{T<:Real} <: CouplingAngles
+    θ1::T
+    ϕ1::T
+end
+
+struct CouplAng2D{T<:Real} <: CouplingAngles
+    θ1::T
+    ϕ1::T
+    θ2::T
+    ϕ2::T
+end
+
+struct CouplAng3D{T<:Real} <: CouplingAngles
+    θ1::T
+    ϕ1::T
+    θ2::T
+    ϕ2::T
+    θ3::T
+    ϕ3::T
+end
+
+hspace_size(n::Lev1D) = 2*n.n1
+hspace_size(n::Lev2D) = 2*n.n1*n.n2
+hspace_size(n::Lev3D) = 2*n.n1*n.n2*n.n3
+
+dim(n::Lev1D) = 1
+dim(n::Lev2D) = 2
+dim(n::Lev3D) = 3

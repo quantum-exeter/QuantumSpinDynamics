@@ -13,7 +13,7 @@ square(n) = n*n
 𝕀(n) = Matrix(I, n, n) 
 𝕀s = 𝕀(2) # Spin
 
-#### Partial Trace ###
+### Partial Trace ###
 function ptrace(ρ, n)
     nR = Int(size(ρ, 1)/n) # This is the remaining dimension
     lhs(i) = kronecker(𝕀(nR), (𝕀(n)[[i],:]))

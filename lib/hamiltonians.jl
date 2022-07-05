@@ -22,51 +22,28 @@ function create(n)
 end
 
 ## Annihilation Operator ##
-function annihilate(n)
-    return adjoint(create(n))
-end
+annihilate(n) = adjoint(create(n))
+
+## Position Operator ##
+X(n) = annihilate(n) + create(n)
+N(n) = create(n)*annihilate(n)
 
 ### Hamiltonians ###
 
-## Bare Spin Hamiltonian ##
-HG() = -sign(γ)*σz
+## Spin Hamiltonian ##
+HS() = -sign(γ)*σz
+HS(n::Lev1D) = -sign(γ)*kronecker(σz, 𝕀(n.n1))
+HS(n::Lev2D) = -sign(γ)*kronecker(σz, 𝕀(n.n1), 𝕀(n.n2))
+HS(n::Lev3D) = -sign(γ)*kronecker(σz, 𝕀(n.n1), 𝕀(n.n2), 𝕀(n.n3))
 
-## 1D Hamiltonian ##
-function HS1D(n1, λ1, Ω1)
-    spin = -sign(γ)*kronecker(σz, 𝕀(n1))
-    rc = scale*kronecker(𝕀s, (Ω1/ωL)*(create(n1)*annihilate(n1)))
-    int = (λ1/ωL)*kronecker(sc(1), (create(n1) + annihilate(n1)))
-    return spin + rc + int
-end
+## Interaction Hamiltonian ##
+HInt(prm::LorPrm1D, ang::CouplAng1D, n::Lev1D) = sqrt(prm.α1/prm.ω01)*kronecker(sc(ang.θ1, ang.ϕ1), X(n.n1))
+HInt(prm::LorPrm2D, ang::CouplAng2D, n::Lev2D) = sqrt(prm.α1/prm.ω01)*kronecker(sc(ang.θ1, ang.ϕ1), X(n.n1), 𝕀(n.n2)) + sqrt(prm.α2/prm.ω02)*kronecker(sc(ang.θ2, ang.ϕ2), 𝕀(n.n1), X(n.n2))
+HInt(prm::LorPrm3D, ang::CouplAng3D, n::Lev3D) = sqrt(prm.α1/prm.ω01)*kronecker(sc(ang.θ1, ang.ϕ1), X(n.n1), 𝕀(n.n2), 𝕀(n.n3)) + sqrt(prm.α2/prm.ω02)*kronecker(sc(ang.θ2, ang.ϕ2), 𝕀(n.n1), X(n.n2), 𝕀(n.n3)) + sqrt(prm.α3/prm.ω03)*kronecker(sc(ang.θ3, ang.ϕ3), 𝕀(n.n1), 𝕀(n.n2), X(n.n3))
 
-## 2D Hamiltonian ##
-function HS2D(n1, n2, λ1, λ2, Ω1, Ω2)
-    spin = -sign(γ)*kronecker(σz, 𝕀(n1), 𝕀(n2))
-    rc = scale*kronecker(𝕀s, (Ω1/ωL)*(create(n1)*annihilate(n1)), 𝕀(n2)) + scale*kronecker(𝕀s, 𝕀(n1), (Ω2/ωL)*(create(n2)*annihilate(n2)))
-    int = (λ1/ωL)*kronecker(sc(1), (create(n1) + annihilate(n1)), 𝕀(n2)) + (λ2/ωL)*kronecker(sc(2), 𝕀(n1), (create(n2) + annihilate(n2)))
-    return spin + rc + int
-end
+## Bath Hamiltonian ##
+HB(prm::LorPrm1D, n::Lev1D) = (1/s0)*prm.ω01*kronecker(𝕀s, N(n.n1))
+HB(prm::LorPrm2D, n::Lev2D) = (1/s0)*prm.ω01*kronecker(𝕀s, N(n.n1), 𝕀(n.n2)) + prm.ω02*kronecker(𝕀s, 𝕀(n.n1), N(n.n2))
+HB(prm::LorPrm3D, n::Lev3D) = (1/s0)*prm.ω01*kronecker(𝕀s, N(n.n1), 𝕀(n.n2), 𝕀(n.n3)) + prm.ω02*kronecker(𝕀s, 𝕀(n.n1), N(n.n2), 𝕀(n.n3)) + prm.ω03*kronecker(𝕀s, 𝕀(n.n1), 𝕀(n.n2), N(n.n3))
 
-## 3D Hamiltonian ##
-function HS3D(n1, n2, n3, λ1, λ2, λ3, Ω1, Ω2, Ω3)
-    spin = -sign(γ)*kronecker(σz, 𝕀(n1), 𝕀(n2), 𝕀(n3))
-    rc = scale*kronecker(𝕀s, (Ω1/ωL)*(create(n1)*annihilate(n1)), 𝕀(n2), 𝕀(n3)) + scale*kronecker(𝕀s, 𝕀(n1), (Ω2/ωL)*(create(n2)*annihilate(n2)), 𝕀(n3)) + scale*kronecker(𝕀s, 𝕀(n1), 𝕀(n2), (Ω3/ωL)*(create(n3)*annihilate(n3)))
-    int = (λ1/ωL)*kronecker(sc(1), (create(n1) + annihilate(n1)), 𝕀(n2), 𝕀(n3)) + (λ2/ωL)*kronecker(sc(2), 𝕀(n1), (create(n2) + annihilate(n2)), 𝕀(n3)) + (λ3/ωL)*kronecker(sc(3), 𝕀(n1), 𝕀(n2), (create(n3) + annihilate(n3)))
-    return spin + rc + int
-end
-
-## Single Function for Access to All Dimensions ##
-function HS(dim)
-    if dim == 1
-        return HS1D(n1, λ1, Ω1)
-    elseif dim == 2
-        return HS2D(n1, n2, λ1, λ2, Ω1, Ω2)
-    elseif dim == 3 
-        return HS3D(n1, n2, n3, λ1, λ2, λ3, Ω1, Ω2, Ω3)
-    else
-        print("Please return a dimension of either 1, 2 or 3.")
-    end
-end
-
-## General Bath Hamiltonian ##
-HB(n, Ω) = (Ω/ωL)*(create(n)*annihilate(n))
+HTot(prm::Lorentzian, ang::CouplingAngles, n::Levels) = HS(n) + HInt(prm, ang, n) + HB(prm, n) 
