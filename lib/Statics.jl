@@ -5,18 +5,21 @@ module Statics
     using Kronecker
 
     ### Inclusions ###
+    include("variables.jl")
     include("hamiltonians.jl")
     include("magnetisations.jl")
     include("maths.jl")
     include("operators.jl")
     include("states.jl")
-    include("variables.jl")
 
     ####################################
     ####################################
     ####################################
 
     ### Exports ###
-    export szGibbs, szMFGS, szGround, szAnalytical3D, realIfClose
+    export LorPrm1D, LorPrm2D, LorPrm3D,
+           CouplAng1D, CouplAng2D, CouplAng3D,
+           Lev1D, Lev2D, Lev3D,
+           szGibbs, szMFGS, szGround, szAnalytical3D, realIfClose
 
 end
