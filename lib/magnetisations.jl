@@ -2,9 +2,16 @@
 #### magnetisations.jl ####
 ###########################
 
-sz(ρ, T) = tr(ρ*σz)
+sz(ρ) = tr(ρ*σz)
 
-szGibbs(T) = sz(ρGibbs(T), T)
-szMFGS(prm::Lorentzian, ang::CouplingAngles, n::Levels, T) = sz(ρMFGS(prm, ang, n, T), T)
-szGround(prm::Lorentzian, ang::CouplingAngles, n::Levels, T) = sz(ρGround(prm, ang, n), T)
+### Statics ###
+szGibbs(T) = sz(ρGibbs(T))
+szMFGS(prm::Lorentzian, ang::CouplingAngles, n::Levels, T) = sz(ρMFGS(prm, ang, n, T))
+szGround(prm::Lorentzian, ang::CouplingAngles, n::Levels, T) = sz(ρGround(prm, ang, n))
 szAnalytical3D(T) = -tanh(1/T)
+
+### Dynamics ###
+function szDyn(prm::Lorentzian, ang::CouplingAngles, n::Levels, T, tspan, t)
+    ρ = dsolve(prm, ang, n, T, tspan)
+    return tr(ρ(t)*kronecker(σz, 𝕀(dim(n)/2)))
+end
