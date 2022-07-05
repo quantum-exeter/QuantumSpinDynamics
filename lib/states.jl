@@ -41,6 +41,6 @@ function ρBloch()
 end
 
 ## Joint States ##
-ρ0(prm::LorPrm1D, n::Lev1D, T) = kronecker(ρBloch(), 𝕀(n.n1)) + thermal(HB(prm, n), T)
-ρ0(prm::LorPrm2D, n::Lev2D, T) = kronecker(bloch_state(), 𝕀(n.n1), 𝕀(n.n2)) + thermal(HB(prm, n), T)
-ρ0(prm::LorPrm3D, n::Lev3D, T) = kronecker(bloch_state(), 𝕀(n.n1), 𝕀(n.n2), 𝕀(n.n3)) + thermal(HB(prm, n), T)
+ρ0(prm::LorPrm1D, n::Lev1D, T) = kronecker(ρBloch(), thermal(prm.ω01*N(n.n1), T))
+ρ0(prm::LorPrm2D, n::Lev2D, T) = kronecker(ρBloch(), thermal(prm.ω01*N(n.n1), T), thermal(prm.ω02*N(n.n2), T))
+ρ0(prm::LorPrm3D, n::Lev3D, T) = kronecker(ρBloch(), thermal(prm.ω01*N(n.n1), T), thermal(prm.ω02*N(n.n2), T), thermal(prm.ω03*N(n.n3), T))
