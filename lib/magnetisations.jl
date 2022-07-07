@@ -13,5 +13,5 @@ szAnalytical3D(T) = -tanh(1/T)
 ### Dynamics ###
 function szDyn(prm::Lorentzian, ang::CouplingAngles, n::Levels, T, tspan, t)
     ρ = dsolve(prm, ang, n, T, tspan)
-    return tr(ρ(t)*kronecker(σz, 𝕀(dim(n)/2)))
+    return realIfClose(tr(ρ(t)*kronecker(σz, 𝕀(Int(hspace_size(n)/2)))))
 end
