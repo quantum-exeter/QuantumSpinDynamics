@@ -2,7 +2,7 @@
 #### variables.jl ####
 ######################
 
-γ = -1 # Gyromagnetic ratio for an electron
+γ = 1 # Gyromagnetic ratio for an electron
 Λ = 10^10 # Cutoff frequency for spectral density
 s0 = 1/2 # Spin size
 
