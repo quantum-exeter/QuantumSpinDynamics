@@ -4,6 +4,7 @@ module Dynamics
     using LinearAlgebra
     using Kronecker
     using DifferentialEquations
+    using SparseArrays
 
     ### Inclusions ###
     include("variables.jl")
