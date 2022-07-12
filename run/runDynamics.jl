@@ -5,7 +5,7 @@ include("../lib/Dynamics.jl")
 using .Dynamics
 
 ### Parameters ###
-prm = LorPrm2D(2.0, 0.001, 10.0, 2.0, 0.001, 10.0) # Lorentzian parameters
+prm = LorPrm3D(2.0, 0.001, 10.0, 2.0, 0.001, 10.0, 2.0, 0.001, 10.0) # Lorentzian parameters
 ang =  CouplAng2D(π/2, 0.0, π/2, π/2) # Coupling angles
 n = Lev2D(3, 3) # Number of RC levels
 T = 0.01 # Temperature
