@@ -20,6 +20,7 @@ module Statics
     export LorPrm1D, LorPrm2D, LorPrm3D,
            CouplAng1D, CouplAng2D, CouplAng3D,
            Lev1D, Lev2D, Lev3D,
-           szGibbs, szMFGS, szGround, szAnalytical3D, realIfClose
+           szGibbs, szMFGS, szGround, szAnalytical3D, realIfClose,
+           ρMFGS
 
 end
