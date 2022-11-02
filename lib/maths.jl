@@ -27,3 +27,29 @@ fidelity(ρ1, ρ2) = square(tr(sqrt(sqrt(ρ1)*ρ2*sqrt(ρ1))))
 ### Check for Choppable Components ###
 realIfClose(c) = isnan(imag(c)) || imag(c) < 1e-14 ? real(c) : c;
 realIfClose(c::AbstractArray) = realIfClose.(c);
+
+### Integration ###
+
+xcoth(x) = iszero(x) ? one(x) : x*coth(x)
+
+function dblquadgk(f, a::AbstractArray{T}, b::AbstractArray{T};
+    rtol=sqrt(eps(T)), atol=zero(T), maxevals=10^7, order=7) where T<:AbstractFloat
+J(x) = quadgk(y -> f(x,y), a[2], b[2], atol=atol, maxevals=maxevals, order=order)[1]
+K = quadgk(x -> J(x), a[1], b[1], atol=atol, maxevals=maxevals, order=order)[1]
+return K
+end
+
+function quadgk_cauchy(f, a, c, b)
+  fc = f(c)
+  g(x) = (f(x) - fc)/(x - c)
+  I = quadgk(g, a, c, b)
+  C = fc*log(abs((b - c)/(a - c))) 
+  return (I[1] + C, I[2], C)
+end
+  
+function quadgk_hadamard(f, a, c, b)
+  df(x) = ForwardDiff.derivative(f,x)
+  I = quadgk_cauchy(df, a, c, b)
+  C = f(a)/(a-c) - f(b)/(b-c)
+  return (C + I[1], I[2], C)
+end
