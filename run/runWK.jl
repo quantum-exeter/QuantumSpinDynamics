@@ -9,10 +9,10 @@ using .Statics
 #prmUS = 2.0, 0.001, 1000
 
 ### Parameters ###
-prm = LorPrm1D(2.0, 0.001, 1.) 
+prm = LorPrm1D(2., 0.001, 1.) 
 
 ### Temperature Range ###
-T = exp10.(range(-2, 3, length=100))
+T = exp10.(range(-3, 3, length=20))
 
 szWK_list = [realIfClose(szWK(1/i, prm)) for i in T]
 
