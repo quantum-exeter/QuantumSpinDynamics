@@ -28,7 +28,7 @@ module Statics
            sxGibbs, sxMFGS, sxGround, 
            syGibbs, syMFGS, syGround, 
            szGibbs, szMFGS, szGround, szAnalytical3D, 
-           szWK,
+           szWK, szWKZT,
            realIfClose, ρMFGS
 
 end
