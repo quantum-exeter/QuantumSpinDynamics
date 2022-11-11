@@ -42,7 +42,7 @@ end
 function quadgk_cauchy(f, a, c, b)
   fc = f(c)
   g(x) = (f(x) - fc)/(x - c)
-  I = quadgk(g, a, c, b)
+  I = quadgk(g, a, c, b, order=12)
   C = fc*log(abs((b - c)/(a - c))) 
   return (I[1] + C, I[2], C)
 end
