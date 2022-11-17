@@ -4,20 +4,27 @@ using DataFrames
 include("../lib/Statics.jl")
 using .Statics
 
+### Low Gamma ###
 #prma = 2.0, 0.001, 10.0
 #prmb = 2.0, 0.001, 1.0
+
+### Weak ###
 #prmc = 2.0, 0.001, 0.1
 
+### High Gamma ###
+#prmd = 2.0, 0.6, 10.0
+#prme = 2.0, 0.6, 1.0
+
 ### Parameters ###
-# prm = LorPrm1D(2.0, 0.001, 10.0) 
+prm = LorPrm1D(2., 0.6, 1.) 
 # prm = LorPrm2D(2.0, 0.001, 10.0, 2.0, 0.001, 10.0) 
-prm = LorPrm3D(2.0, 0.001, 0.1, 2.0, 0.001, 0.1, 2.0, 0.001, 0.1) # Lorentzian parameters
-# ang =  CouplAng1D(0.0, 0.0) # Coupling angles
+# prm = LorPrm3D(2., 0.6, 1., 2., 0.6, 1., 2., 0.6, 1.) # Lorentzian parameters
+ang =  CouplAng1D(π/4, 0.0) # Coupling angles
 # ang =  CouplAng2D(π/2, 0.0, π/2, π/2) # Coupling angles
-ang =  CouplAng3D(π/2, 0.0, π/2, π/2, 0.0, 0.0) # Coupling angles
-# n = Lev1D(100) # Number of RC levels
+# ang =  CouplAng3D(π/2, 0.0, π/2, π/2, 0.0, 0.0) # Coupling angles
+n = Lev1D(100) # Number of RC levels
 # n = Lev2D(10, 10) # Number of RC levels
-n = Lev3D(5, 5, 5) # Number of RC levels
+# n = Lev3D(5, 5, 5) # Number of RC levels
 
 ### Temperature Range ###
 T = exp10.(range(-2, 3, length=100))
@@ -36,4 +43,5 @@ dfGibbs = DataFrame(hcat(T, sxG_list, syG_list, szG_list), :auto)
 CSV.write("Gibbs.csv",  dfGibbs, header = ["T", "sxG", "syG", "szG"])
 
 dfMFGS = DataFrame(hcat(T, sxMFGS_list, syMFGS_list, szMFGS_list), :auto)
-CSV.write("/Users/charliehogg/Work/QuantumSpinDynamics/paper_data/MFGS_WK_prmc.csv",  dfMFGS, header = ["T", "sxMFGS", "syMFGS", "szMFGS"])
+# CSV.write("/Users/charliehogg/Work/QuantumSpinDynamics/paper_data/MFGS_WK_prmc.csv",  dfMFGS, header = ["T", "sxMFGS", "syMFGS", "szMFGS"]) # Export for Mac
+CSV.write("C:/Users/crh222/QuantumSpinDynamics/qu_MFGS_1D_pi4_prmh_100.csv",  dfMFGS, header = ["T", "sxMFGS", "syMFGS", "szMFGS"]) # Export for Windows
