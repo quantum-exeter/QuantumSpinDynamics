@@ -5,15 +5,20 @@ include("../lib/Statics.jl")
 using .Statics
 
 ### Low Gamma ###
-#prma = 2.0, 0.001, 10.0
-#prmb = 2.0, 0.001, 1.0
+#prma = 2., 0.001, 10.
+#prmb = 2., 0.001, 1.
 
 ### Weak ###
-#prmc = 2.0, 0.001, 0.1
+#prmc = 2., 0.001, 0.1
 
 ### High Gamma ###
-#prmd = 2.0, 0.6, 10.0
-#prme = 2.0, 0.6, 1.0
+#prmd = 2., 0.6, 10.
+#prme = 2., 0.6, 1.
+
+### Ultrastrong ###
+#prmf = 2., 0.6, 20.
+#prmg = 2., 0.6, 60.
+#prmh = 2., 0.6, 80.
 
 ### Parameters ###
 prm = LorPrm1D(2., 0.6, 1.) 
