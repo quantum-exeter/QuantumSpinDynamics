@@ -25,10 +25,10 @@ function ρMFGS(prm::Lorentzian, ang::CouplingAngles, n::Levels, T)
 end
 
 ### Ground States ###
-function ρGround(prm::Lorentzian, ang::CouplingAngles, n::Levels)
+function ψGround(prm::Lorentzian, ang::CouplingAngles, n::Levels)
     H = HTot(prm, ang, n)
     state = eigen(H).vectors[:,1]
-    return adjoint(state)*state
+    return state
 end
 
 ### Initial States (for Dynamics) ###
