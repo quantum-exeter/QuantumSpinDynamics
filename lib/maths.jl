@@ -13,12 +13,21 @@ square(n) = n*n
 𝕀(n) = Matrix(I, n, n) 
 𝕀s = 𝕀(2) # Spin
 
-### Partial Trace ###
+### Partial Trace (Tracing Out Bath) ###
 function ptrace(ρ, n)
     nR = Int(size(ρ, 1)/n) # This is the remaining dimension
     lhs(i) = kronecker(𝕀(nR), (𝕀(n)[[i],:]))
     rhs(i) = kronecker(𝕀(nR), (𝕀(n)[:,i]))
     return sum(lhs(i)*ρ*rhs(i) for i=1:n)
+end
+
+### Partial Trace (Tracing Out Spin) ###
+function ptraceSp(ρ)
+  n = 2
+  nR = Int(size(ρ, 1)/n) # This is the remaining dimension
+  lhs(i) = kronecker((𝕀(n)[[i],:]), 𝕀(nR))
+  rhs(i) = kronecker((𝕀(n)[:,i]), 𝕀(nR))
+  return sum(lhs(i)*ρ*rhs(i) for i=1:n)
 end
 
 ### Uhlmann Fidelity ###
@@ -27,6 +36,11 @@ fidelity(ρ1, ρ2) = square(tr(sqrt(sqrt(ρ1)*ρ2*sqrt(ρ1))))
 ### Check for Choppable Components ###
 realIfClose(c) = isnan(imag(c)) || imag(c) < 1e-14 ? real(c) : c;
 realIfClose(c::AbstractArray) = realIfClose.(c);
+zeroIfClose(x) = abs(x) < 1e-12 ? zero(x) : x;
+chopReal(x) = real(x) < 1e-12 ? imag(x)*1im : x;
+chopImag(x) = imag(x) < 1e-12 ? real(x) : x;
+chopBoth(x) = chopReal(chopImag(x));
+
 
 ### Integration ###
 
