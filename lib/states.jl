@@ -24,11 +24,25 @@ function ρMFGS(prm::Lorentzian, ang::CouplingAngles, n::Levels, T)
     return ptrace(stateTot, ntr)
 end
 
-### Ground States ###
-function ψGround(prm::Lorentzian, ang::CouplingAngles, n::Levels)
+### Variational States ###
+function ψGround(prm::LorPrm3D, ang::CouplAng3D, n::Lev3D)
     H = HTot(prm, ang, n)
     state = eigen(H).vectors[:,1]
     return state
+end
+
+function ϕp(prm::LorPrm3D, ang::CouplAng3D, n::Lev3D)
+    su = [1 0]
+    state = chopBoth.(kronecker(su, 𝕀(n.n1*n.n2*n.n3))*ψGround(prm, ang, n))
+    stateNorm = (1/norm(state))*state
+    return stateNorm
+end
+
+function ϕm(prm::LorPrm3D, ang::CouplAng3D, n::Lev3D)
+    sd = [0 1]
+    state = chopBoth.(kronecker(sd, 𝕀(n.n1*n.n2*n.n3))*ψGround(prm, ang, n))
+    stateNorm = (1/norm(state))*state
+    return stateNorm
 end
 
 ### Initial States (for Dynamics) ###
