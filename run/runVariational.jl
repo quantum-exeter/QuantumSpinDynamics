@@ -1,8 +1,8 @@
 using CSV
 using DataFrames
 
-include("../lib/Statics.jl")
-using .Statics
+include("../lib/Variational.jl")
+using .Variational
 
 ### Low Gamma ###
 #prma = 2., 0.001, 10.
@@ -23,15 +23,9 @@ using .Statics
 #prmj = 2., 0.6, 1000.
 
 ### Parameters ###
-prm = LorPrm3D(2., 0.6, 10., 2., 0.6, 10., 2., 0.6, 10.) # Lorentzian parameters
+prm = LorPrm3D(2., 0.6, 0.1, 2., 0.6, 0.1, 2., 0.6, 0.1) # Lorentzian parameters
 ang =  CouplAng3D(π/2, 0.0, π/2, π/2, 0.0, 0.0) # Coupling angles
 n = Lev3D(2, 2, 2) # Number of RC levels
 
-b0 = [1, 0]
-b1 = [0, 1]
-
-using Kronecker
-
-kronecker(b0, b1, b0)
-
-x =ϕp(prm, ang, n)
+ϕm(prm, ang, n)
+ϕp(prm, ang, n)
