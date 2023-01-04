@@ -41,9 +41,7 @@ chopReal(x) = real(x) < 1e-12 ? imag(x)*1im : x;
 chopImag(x) = imag(x) < 1e-12 ? real(x) : x;
 chopBoth(x) = chopReal(chopImag(x));
 
-
 ### Integration ###
-
 xcoth(x) = iszero(x) ? one(x) : x*coth(x)
 
 function dblquadgk(f, a::AbstractArray{T}, b::AbstractArray{T};
