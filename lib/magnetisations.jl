@@ -2,6 +2,7 @@
 #### magnetisations.jl ####
 ###########################
 
+### Expectation Values ###
 sx(ρ) = tr(ρ*σx)
 sy(ρ) = tr(ρ*σy)
 sz(ρ) = tr(ρ*σz)

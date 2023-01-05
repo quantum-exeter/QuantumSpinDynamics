@@ -1,5 +1,11 @@
+#########################
+#### diffEqSolver.jl ####
+#########################
+
+### Algorithm ###
 alg = Vern7()
 
+### Differential Equation Solver ###
 function dsolve(prm::Lorentzian, ang::CouplingAngles, n::Levels, T, tspan)
     superop = 𝒮(prm, ang, n, T)
     state_init = ρ0(prm, n, T)
