@@ -5,8 +5,10 @@
 ### Thermal State ###
 function thermal(H, T)
     n = size(H, 1)
-    ϵ = eigen(H).values
-    P = eigen(H).vectors
+    F = eigen(H)
+    ϵ, P = F.values, F.vectors
+    # ϵ = eigen(H).values
+    # P = eigen(H).vectors
     𝒵 = sum(exp(-ϵ[i]/T) for i = 1:n)
     ρ = (1/𝒵)*Diagonal([exp(-ϵ[i]/T) for i = 1:n])
     return P*ρ*adjoint(P)
@@ -16,12 +18,18 @@ end
 
 ### MFGS ###
 function ρMFGS(prm::Lorentzian, ang::CouplingAngles, n::Levels, T)
+    println("Computing MFGS state ...")
     H = HTot(prm, ang, n) # Hamiltonian for the given coupling dimension
-    proj = eigen(H).vectors # Projector onto the basis of H
-    HTr = adjoint(proj)*H*proj # Transformed H
-    stateTot = proj*thermal(HTr, T)*adjoint(proj)
+    println("Computed full Hamiltonian")
+    # proj = eigen(H).vectors # Projector onto the basis of H
+    # HTr = adjoint(proj)*H*proj # Transformed H
+    # stateTot = proj*thermal(HTr, T)*adjoint(proj)
+    stateTot = thermal(H, T)
+    print("Computed total state")
     ntr = Int(hspace_size(n)/2)
-    return ptrace(stateTot, ntr)
+    rho = ptrace(stateTot, ntr)
+    println("Done")
+    return rho
 end
 
 ### Variational States ###
