@@ -1,5 +1,7 @@
+using MKL
 using CSV
 using DataFrames
+using ProgressMeter
 
 include("../lib/Statics.jl")
 using .Statics
@@ -22,37 +24,42 @@ using .Statics
 #prmj = 2., 0.6, 500.
 #prmk = 2., 0.6, 1000.
 
-prm = LorPrm1D(2., 0.6, 1.) 
+# prm = LorPrm1D(2., 0.6, 1.) 
 # prm = LorPrm2D(2., 0.6, 1., 2., 0.6, 1.) 
-# prm = LorPrm3D(2., 0.6, 1., 2., 0.6, 1., 2., 0.6, 1.)
+prm = LorPrm3D(2., 0.6, 1000., 2., 0.6, 1000., 2., 0.6, 1000.)
 
 ## Coupling Angles ##
-ang =  CouplAng1D(π/4, 0.0)
+# ang =  CouplAng1D(π/4, 0.0)
 # ang =  CouplAng2D(π/2, 0.0, π/2, π/2)
-# ang =  CouplAng3D(π/2, 0.0, π/2, π/2, 0.0, 0.0)
+ang =  CouplAng3D(π/2, 0.0, π/2, π/2, 0.0, 0.0)
 
 ## RC Levels ##
-n = Lev1D(100) # Number of RC levels
+# n = Lev1D(100) # Number of RC levels
 # n = Lev2D(10, 10) # Number of RC levels
-# n = Lev3D(5, 5, 5) # Number of RC levels
+n = Lev3D(6, 6, 6) # Number of RC levels
 
 ## Temperature Range ##
-T = exp10.(range(-2, 3, length=100))
+T = exp10.(range(-1, 0, length=20))
 
-sxG_list = [realIfClose(sxGibbs(i)) for i in T]
-syG_list = [realIfClose(syGibbs(i)) for i in T]
-szG_list = [realIfClose(szGibbs(i)) for i in T]
-sxMFGS_list = [realIfClose(sxMFGS(prm, ang, n, i)) for i in T]
-syMFGS_list = [realIfClose(syMFGS(prm, ang, n, i)) for i in T]
-szMFGS_list = [realIfClose(szMFGS(prm, ang, n, i)) for i in T]
+# sxG_list = [realIfClose(sxGibbs(i)) for i in T]
+# syG_list = [realIfClose(syGibbs(i)) for i in T]
+# szG_list = [realIfClose(szGibbs(i)) for i in T]
+# sxMFGS_list = [realIfClose(sxMFGS(prm, ang, n, i)) for i in T]
+# syMFGS_list = [realIfClose(syMFGS(prm, ang, n, i)) for i in T]
+# szMFGS_list = [realIfClose(szMFGS(prm, ang, n, i)) for i in T]
+szMFGS_list = zeros(length(T))
+@showprogress for i in eachindex(T)
+    szMFGS_list[i] = real(szMFGS(prm, ang, n, big(T[i])))
+end
 
+println(szMFGS_list)
 
 ### Store Values ###
-dfGibbs = DataFrame(hcat(T, sxG_list, syG_list, szG_list), :auto)
-dfMFGS = DataFrame(hcat(T, sxMFGS_list, syMFGS_list, szMFGS_list), :auto)
+# dfGibbs = DataFrame(hcat(T, szG_list), :auto)
+dfMFGS = DataFrame(hcat(T, szMFGS_list), :auto)
 
 ### Export for Mac ###
 # CSV.write("/Users/charliehogg/filename.csv",  dfMFGS, header = ["T", "sxMFGS", "syMFGS", "szMFGS"])
 
 ### Export for Windows ###
-# CSV.write("C:/Users/crh222/filename.csv",  dfMFGS, header = ["T", "sxMFGS", "syMFGS", "szMFGS"])
+CSV.write("C://Users//crh222//Dropbox//PhD//1. 3D Project//Data//Ultrastrong//qu_MFGS_3D_prmk_5_test.csv",  dfMFGS, header = ["T", "szMFGS"])
