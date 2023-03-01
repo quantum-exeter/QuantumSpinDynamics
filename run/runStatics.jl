@@ -24,9 +24,9 @@ using .Statics
 #prmj = 2., 0.6, 500.
 #prmk = 2., 0.6, 1000.
 
-# prm = LorPrm1D(2., 0.6, 1.) 
-# prm = LorPrm2D(2., 0.6, 1., 2., 0.6, 1.) 
-prm = LorPrm3D(2., 0.6, 1000., 2., 0.6, 1000., 2., 0.6, 1000.)
+# prm = LorPrm1D(2., 0.6, 0.01) 
+# prm = LorPrm2D(2., 0.6, 1000., 2., 0.6, 1000.) 
+prm = LorPrm3D(2., 0.6, 0.1, 2., 0.6, 0.1, 2., 0.6, 0.1)
 
 ## Coupling Angles ##
 # ang =  CouplAng1D(π/4, 0.0)
@@ -39,27 +39,30 @@ ang =  CouplAng3D(π/2, 0.0, π/2, π/2, 0.0, 0.0)
 n = Lev3D(6, 6, 6) # Number of RC levels
 
 ## Temperature Range ##
-T = exp10.(range(-1, 0, length=20))
+T = exp10.(range(-2, 2, length=100))
 
 # sxG_list = [realIfClose(sxGibbs(i)) for i in T]
 # syG_list = [realIfClose(syGibbs(i)) for i in T]
 # szG_list = [realIfClose(szGibbs(i)) for i in T]
 # sxMFGS_list = [realIfClose(sxMFGS(prm, ang, n, i)) for i in T]
 # syMFGS_list = [realIfClose(syMFGS(prm, ang, n, i)) for i in T]
-# szMFGS_list = [realIfClose(szMFGS(prm, ang, n, i)) for i in T]
+
 szMFGS_list = zeros(length(T))
 @showprogress for i in eachindex(T)
-    szMFGS_list[i] = real(szMFGS(prm, ang, n, big(T[i])))
+    szMFGS_list[i] = real(szMFGS(prm, ang, n, T[i]))
 end
 
-println(szMFGS_list)
+# szMFGS_list = zeros(length(T))
+# @showprogress for i in eachindex(T)
+#     szMFGS_list[i] = real(szMFGS(prm, ang, n, big(T[i])))
+# end
 
 ### Store Values ###
 # dfGibbs = DataFrame(hcat(T, szG_list), :auto)
 dfMFGS = DataFrame(hcat(T, szMFGS_list), :auto)
 
 ### Export for Mac ###
-# CSV.write("/Users/charliehogg/filename.csv",  dfMFGS, header = ["T", "sxMFGS", "syMFGS", "szMFGS"])
+CSV.write("paper_data/WK_MFGS_prmc.csv",  dfMFGS, header = ["T", "szMFGS"])
 
 ### Export for Windows ###
-CSV.write("C://Users//crh222//Dropbox//PhD//1. 3D Project//Data//Ultrastrong//qu_MFGS_3D_prmk_5_test.csv",  dfMFGS, header = ["T", "szMFGS"])
+# CSV.write(".//paper_data//WK_MFGS_prmc.csv",  dfMFGS, header = ["T", "szMFGS"])
