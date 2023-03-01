@@ -35,4 +35,3 @@ function Δ′(prm::LorPrm1D, β)
   Ir = quadgk(ω -> I(ω)/(ω - 1)^2, 2.0, Inf)[1]
   return Il + Ir
 end
-
