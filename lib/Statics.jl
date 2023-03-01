@@ -27,8 +27,8 @@ module Statics
            Lev1D, Lev2D, Lev3D,
            sxGibbs, sxMFGS, sxGround, 
            syGibbs, syMFGS, syGround, 
-           szGibbs, szMFGS, szGround, szAnalytical3D, 
-           szWK, szWK2, szWKZT,
+           szGibbs, szMFGS, szGround, szAnalytical3D,
+           szWK, szWKZT,
            realIfClose, ρMFGS
-
+           
 end
