@@ -23,5 +23,5 @@ szAnalytical3D(T) = -tanh(1/T)
 
 ### Dynamics ###
 sxDyn(ρ, n) = tr(ρ*kronecker(σx, 𝕀(Int(hspace_size(n)/2))))
-syDyn(ρ, n) = tr(ρ*kronecker(σt, 𝕀(Int(hspace_size(n)/2))))
+syDyn(ρ, n) = tr(ρ*kronecker(σy, 𝕀(Int(hspace_size(n)/2))))
 szDyn(ρ, n) = tr(ρ*kronecker(σz, 𝕀(Int(hspace_size(n)/2))))

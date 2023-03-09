@@ -18,17 +18,13 @@ end
 
 ### MFGS ###
 function ρMFGS(prm::Lorentzian, ang::CouplingAngles, n::Levels, T)
-    println("Computing MFGS state ...")
     H = HTot(prm, ang, n) # Hamiltonian for the given coupling dimension
-    println("Computed full Hamiltonian")
     # proj = eigen(H).vectors # Projector onto the basis of H
     # HTr = adjoint(proj)*H*proj # Transformed H
     # stateTot = proj*thermal(HTr, T)*adjoint(proj)
     stateTot = thermal(H, T)
-    print("Computed total state")
     ntr = Int(hspace_size(n)/2)
     rho = ptrace(stateTot, ntr)
-    println("Done")
     return rho
 end
 
