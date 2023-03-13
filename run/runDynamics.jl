@@ -29,7 +29,7 @@ prm = LorPrm1D(2., 0.6, 10.)
 # prm = LorPrm3D(2., 0.6, 1., 2., 0.6, 1., 2., 0.6, 1.)
 
 ## Coupling Angles ##
-ang =  CouplAng1D(atan(1/sqrt(2)), π/4)
+ang =  CouplAng1D(atan(sqrt(2)), π/4)
 # ang =  CouplAng2D(π/2, 0.0, π/2, π/2)
 # ang =  CouplAng3D(π/2, 0.0, π/2, π/2, 0.0, 0.0)
 
@@ -39,7 +39,7 @@ n = Lev1D(10) # Number of RC levels
 # n = Lev3D(3, 3, 3) # Number of RC levels
 
 ## Temperature ##
-T = 10
+T = 0.01
 
 ### Time Range ###
 ti, tf, dt = [0 100 1];
@@ -56,7 +56,7 @@ sz_list = [realIfClose(szDyn(ρ(i), n)) for i in t]
 df = DataFrame(hcat(t, sz_list), :auto)
 
 ### Export for Mac ###
-CSV.write("/Users/charliehogg/1D_prmd_10_10.csv",  df, header = ["t", "sz"])
+CSV.write("/Users/charliehogg/Dropbox/PhD/1. 3D Project/Data/Dynamics/1D_prmd_10_001.csv",  df, header = ["t", "sz"])
 
 ### Export for Windows ###
 # CSV.write("C:/Users/crh222/filename.csv",  dfMFGS, header = ["t", "sz"])
