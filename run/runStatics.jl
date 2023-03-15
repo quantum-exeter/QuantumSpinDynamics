@@ -24,7 +24,7 @@ using .Statics
 #prmj = 2., 0.6, 500.
 #prmk = 2., 0.6, 1000.
 
-prm = LorPrm1D(2., 0.6, 20.) 
+prm = LorPrm1D(2., 0.6, 10.) 
 # prm = LorPrm2D(2., 0.6, 1000., 2., 0.6, 1000.) 
 # prm = LorPrm3D(2., 0.6, 0.1, 2., 0.6, 0.1, 2., 0.6, 0.1)
 
@@ -34,21 +34,21 @@ ang =  CouplAng1D(atan(sqrt(2)), π/4)
 # ang =  CouplAng3D(π/2, 0.0, π/2, π/2, 0.0, 0.0)
 
 ## RC Levels ##
-n = Lev1D(200) # Number of RC levels
+n = Lev1D(100) # Number of RC levels
 # n = Lev2D(10, 10) # Number of RC levels
 # n = Lev3D(6, 6, 6) # Number of RC levels
 
 ## Temperature Range ##
-T = exp10.(range(-2, 2, length=200))
+T = exp10.(range(-3, 2, length=100))
 
 sxGS_list = zeros(length(T))
 syGS_list = zeros(length(T))
 szGS_list = zeros(length(T))
 
 @showprogress for i in eachindex(T)
-    sxGS_list[i] = real(sxGibbs(T[i]))
-    syGS_list[i] = real(syGibbs(T[i]))
-    szGS_list[i] = real(szGibbs(T[i]))
+    sxGS_list[i] = real(sxGibbs(big(T[i])))
+    syGS_list[i] = real(syGibbs(big(T[i])))
+    szGS_list[i] = real(szGibbs(big(T[i])))
 end
 
 sxMFGS_list = zeros(length(T))
@@ -56,9 +56,14 @@ syMFGS_list = zeros(length(T))
 szMFGS_list = zeros(length(T))
 
 @showprogress for i in eachindex(T)
-    sxMFGS_list[i] = real(sxMFGS(prm, ang, n, T[i]))
-    syMFGS_list[i] = real(syMFGS(prm, ang, n, T[i]))
-    szMFGS_list[i] = real(szMFGS(prm, ang, n, T[i]))
+    if T[i] < 0.01
+        Ti = big(T[i])
+    else
+        Ti = T[i]
+    end
+    sxMFGS_list[i] = real(sxMFGS(prm, ang, n, Ti))
+    syMFGS_list[i] = real(syMFGS(prm, ang, n, Ti))
+    szMFGS_list[i] = real(szMFGS(prm, ang, n, Ti))
 end
 
 ### Store Values ###
@@ -67,7 +72,7 @@ dfMFGS = DataFrame(hcat(T, sxMFGS_list, syMFGS_list, szMFGS_list), :auto)
 
 ### Export for Mac ###
 CSV.write("paper_data/qu_Gibbs.csv",  dfGibbs, header = ["T", "sxGS", "syGS", "szGS"])
-CSV.write("paper_data/qu_MFGS_1D_prmg_200.csv",  dfMFGS, header = ["T", "sxMFGS", "syMFGS", "szMFGS"])
+CSV.write("paper_data/qu_MFGS_1D_prmd_100.csv",  dfMFGS, header = ["T", "sxMFGS", "syMFGS", "szMFGS"])
 
 ### Export for Windows ###
 # CSV.write(".//paper_data/qu_Gibbs.csv",  dfGibbs, header = ["T", "sxGS", "syGS", "szGS"])
