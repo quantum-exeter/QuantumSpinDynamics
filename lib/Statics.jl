@@ -16,6 +16,7 @@ module Statics
     include("spectralDensity.jl")
     include("states.jl")
     include("wkCoupling.jl")
+    include("entanglement.jl")
 
     ####################################
     ####################################
@@ -29,6 +30,7 @@ module Statics
            syGibbs, syMFGS, syGround, 
            szGibbs, szMFGS, szGround, szAnalytical3D,
            szWK, szWKZT,
-           realIfClose, ρMFGS
-           
+           realIfClose, ρMFGS,
+           entropy
+         
 end
