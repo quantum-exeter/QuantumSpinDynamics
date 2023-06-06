@@ -17,6 +17,7 @@ module Statics
     include("states.jl")
     include("wkCoupling.jl")
     include("entanglement.jl")
+    include("ultrastrong.jl")
 
     ####################################
     ####################################
@@ -31,6 +32,8 @@ module Statics
            szGibbs, szMFGS, szGround, szAnalytical3D,
            szWK, szWKZT,
            realIfClose, ρMFGS,
-           entropy
-         
+           entropy,
+           szTzero, szTzero′,
+           nTzero′
+
 end

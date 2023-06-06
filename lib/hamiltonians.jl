@@ -26,6 +26,11 @@ annihilate(n) = adjoint(create(n))
 
 ## Position Operator ##
 X(n) = annihilate(n) + create(n)
+
+## Momentum Operator ##
+P(n) = im*(create(n) - annihilate(n))
+
+## Number Operator ##
 N(n) = create(n)*annihilate(n)
 
 ### Hamiltonians ###
@@ -41,9 +46,14 @@ HInt(prm::LorPrm1D, ang::CouplAng1D, n::Lev1D) = sqrt(3)*sqrt(prm.α1/prm.ω01)*
 HInt(prm::LorPrm2D, ang::CouplAng2D, n::Lev2D) = sqrt(prm.α1/prm.ω01)*kronecker(sc(ang.θ1, ang.ϕ1), X(n.n1), 𝕀(n.n2)) + sqrt(prm.α2/prm.ω02)*kronecker(sc(ang.θ2, ang.ϕ2), 𝕀(n.n1), X(n.n2))
 HInt(prm::LorPrm3D, ang::CouplAng3D, n::Lev3D) = sqrt(prm.α1/prm.ω01)*kronecker(sc(ang.θ1, ang.ϕ1), X(n.n1), 𝕀(n.n2), 𝕀(n.n3)) + sqrt(prm.α2/prm.ω02)*kronecker(sc(ang.θ2, ang.ϕ2), 𝕀(n.n1), X(n.n2), 𝕀(n.n3)) + sqrt(prm.α3/prm.ω03)*kronecker(sc(ang.θ3, ang.ϕ3), 𝕀(n.n1), 𝕀(n.n2), X(n.n3))
 
+HInt′(prm::LorPrm2D, ang::CouplAng2D, n::Lev2D) = sqrt(prm.α1/(2*prm.ω01))*kronecker(sc(ang.θ1, ang.ϕ1), X(n.n1), 𝕀(n.n2)) + sqrt(prm.α2/(2*prm.ω02))*kronecker(sc(ang.θ1, ang.ϕ1), 𝕀(n.n1), X(n.n2)) + sqrt(prm.α2/(2*prm.ω02))*kronecker(sc(ang.θ2, ang.ϕ2), 𝕀(n.n1), P(n.n2)) - sqrt(prm.α1/(2*prm.ω01))*kronecker(sc(ang.θ2, ang.ϕ2), P(n.n1), 𝕀(n.n2))
+HInt′(prm::LorPrm3D, ang::CouplAng3D, n::Lev3D) = sqrt(prm.α1/(2*prm.ω01))*kronecker(sc(ang.θ1, ang.ϕ1), X(n.n1), 𝕀(n.n2), 𝕀(n.n3)) + sqrt(prm.α2/(2*prm.ω02))*kronecker(sc(ang.θ1, ang.ϕ1), 𝕀(n.n1), X(n.n2), 𝕀(n.n3)) + sqrt(prm.α2/(2*prm.ω02))*kronecker(sc(ang.θ2, ang.ϕ2), 𝕀(n.n1), P(n.n2), 𝕀(n.n3)) - sqrt(prm.α1/(2*prm.ω01))*kronecker(sc(ang.θ2, ang.ϕ2), P(n.n1), 𝕀(n.n2), 𝕀(n.n3)) + sqrt(prm.α3/prm.ω03)*kronecker(sc(ang.θ3, ang.ϕ3), 𝕀(n.n1), 𝕀(n.n2), X(n.n3))
+
 ## Bath Hamiltonian ##
 HB(prm::LorPrm1D, n::Lev1D) = (1/s0)*(prm.ω01*kronecker(𝕀s, N(n.n1)))
 HB(prm::LorPrm2D, n::Lev2D) = (1/s0)*(prm.ω01*kronecker(𝕀s, N(n.n1), 𝕀(n.n2)) + prm.ω02*kronecker(𝕀s, 𝕀(n.n1), N(n.n2)))
 HB(prm::LorPrm3D, n::Lev3D) = (1/s0)*(prm.ω01*kronecker(𝕀s, N(n.n1), 𝕀(n.n2), 𝕀(n.n3)) + prm.ω02*kronecker(𝕀s, 𝕀(n.n1), N(n.n2), 𝕀(n.n3)) + prm.ω03*kronecker(𝕀s, 𝕀(n.n1), 𝕀(n.n2), N(n.n3)))
 
 HTot(prm::Lorentzian, ang::CouplingAngles, n::Levels) = HS(n) + HInt(prm, ang, n) + HB(prm, n) 
+
+HTot′(prm::Lorentzian, ang::CouplingAngles, n::Levels) = HS(n) + HInt′(prm, ang, n) + HB(prm, n)
