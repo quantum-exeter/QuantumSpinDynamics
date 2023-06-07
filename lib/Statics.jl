@@ -5,6 +5,7 @@ module Statics
     using Kronecker
     using QuadGK
     using ForwardDiff
+    using QuantumOptics
 
     ### Inclusions ###
     include("variables.jl")
@@ -34,6 +35,7 @@ module Statics
            realIfClose, ρMFGS,
            entropy,
            szTzero, szTzero′,
-           nTzero′
+           nTzero, nTzero′,
+           osc_positions
 
 end
