@@ -36,6 +36,6 @@ module Statics
            entropy,
            szTzero, szTzero′,
            nTzero, nTzero′,
-           osc_positions
+           osc_positions, xmax
 
 end
