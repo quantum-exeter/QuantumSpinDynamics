@@ -69,7 +69,7 @@ function nTzero′(prm::Lorentzian, ang::CouplingAngles, n::Levels) # Ground-sta
             n2 += tr(N2*P[:,i]*adjoint(P[:,i]))
         end
     end
-    return n1, n2
+    return (n1 + n2)/2
 end
 
 xmax(n) = 1/sqrt(2)*maximum(eigvals(X(n.n1)))
