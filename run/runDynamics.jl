@@ -8,7 +8,7 @@ using .Dynamics
 
 ### Parameters ###
 
-## Lorentzian Spectral Density ##
+## Lorentzian spectral density ##
 # {ω_0, Γ, α}
 #prma = 2., 0.001, 10.
 #prmb = 2., 0.001, 1. 
@@ -25,38 +25,36 @@ using .Dynamics
 #prmk = 2., 0.6, 1000.
 
 prm = LorPrm1D(2., 0.6, 10.) 
-# prm = LorPrm2D(2., 0.6, 1., 2., 0.6, 1.) 
-# prm = LorPrm3D(2., 0.6, 1., 2., 0.6, 1., 2., 0.6, 1.)
+# prm = LorPrm2D(2., 0.6, 10., 2., 0.6, 10.) 
+# prm = LorPrm3D(2., 0.6, 10., 2., 0.6, 10., 2., 0.6, 10.)
 
-## Coupling Angles ##
+## Coupling angles ##
 ang =  CouplAng1D(atan(sqrt(2)), π/4)
 # ang =  CouplAng2D(π/2, 0.0, π/2, π/2)
 # ang =  CouplAng3D(π/2, 0.0, π/2, π/2, 0.0, 0.0)
 
-## RC Levels ##
-n = Lev1D(10) # Number of RC levels
-# n = Lev2D(5, 5) # Number of RC levels
-# n = Lev3D(3, 3, 3) # Number of RC levels
+## RC levels ##
+n = Lev1D(10)
+# n = Lev2D(5, 5)
+# n = Lev3D(3, 3, 3)
 
 ## Temperature ##
 T = 0.01
 
-### Time Range ###
+### Time range ###
 ti, tf, dt = [0 100 1];
 tspan = (ti, tf);
 t = ti:dt:tf;
 
+### Dynamic state expectation values ###
+
+## Initialise lists ##
 sz_list = complex(zeros(length(t)))
-
 ρ = dsolve(prm, ang, n, T, tspan)
-
 sz_list = [realIfClose(szDyn(ρ(i), n)) for i in t]
 
-### Store Values ###
+### Store values ###
 df = DataFrame(hcat(t, sz_list), :auto)
 
-### Export for Mac ###
-CSV.write("/Users/charliehogg/Dropbox/PhD/1. 3D Project/Data/Dynamics/1D_prmd_10_001.csv",  df, header = ["t", "sz"])
-
-### Export for Windows ###
-# CSV.write("C:/Users/crh222/filename.csv",  dfMFGS, header = ["t", "sz"])
+### Export ###
+CSV.write("filename.csv",  dfGibbs, header = ["T", "sz"])
