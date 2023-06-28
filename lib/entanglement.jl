@@ -2,5 +2,5 @@
 #### entanglement.jl ####
 #########################
 
-### Entanglement Entropy ###
+### Entanglement entropy ###
 entropy(ρ) = -tr(ρ*log(ρ))
