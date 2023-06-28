@@ -1,13 +1,13 @@
-######################
-#### integrals.jl ####
-######################
+########################
+#### SDintegrals.jl ####
+########################
 
-### Reorganisation Energy ###
+### Reorganisation energy ###
 function 𝒬(prm::LorPrm1D)
   return quadgk(ω -> spectral_density_Lor_inv(ω, prm), 0.0, Inf)[1]
 end
 
-### Weak-Coupling Integrals ###
+### Weak-coupling integrals ###
 function Σ(prm::LorPrm1D)
   I(ω) = spectral_density_Lor(ω, prm)*ω/(ω +1)
   Il = quadgk_cauchy(I, 0.0, 1.0, 2.0)[1]
