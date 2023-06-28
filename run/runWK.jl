@@ -6,7 +6,7 @@ using .Statics
 
 ### Parameters ###
 
-## Lorentzian Spectral Density ##
+## Lorentzian spectral density ##
 # {ω_0, Γ, α}
 #prma = 2., 0.001, 10.
 #prmb = 2., 0.001, 1. 
@@ -24,18 +24,19 @@ using .Statics
 # MAKE SURE TO SET ALPHA AS DOUBLE THE RC VALUE #
 prm = LorPrm1D(2., 0.6, 0.2)
 
-## Temperature Range ##
+### Temperature range ###
 T = exp10.(range(-2, 2, length=20))
 
+### MF expectation values ###
+
+## T=0 ##
 szWKZT(prm)
 
+## Finite T ##
 szWK_list = [realIfClose(szWK(prm, 1/i)) for i in T]
 
-### Store Values ###
+### Store values ###
 dfWK = DataFrame(hcat(T, szWK_list), :auto)
 
-### Export for Mac ###
-CSV.write("paper_data/WK_analytical_prmc.csv",  dfWK, header = ["T", "szWK"])
-
-### Export for Windows ###
-# CSV.write("C:/Users/crh222/filename.csv",  dfMFGS, header = ["T", "szWK"])
+### Export ###
+CSV.write("paper_data/filename.csv",  dfWK, header = ["T", "szWK"])
