@@ -2,13 +2,13 @@
 #### superoperators.jl ####
 ###########################
 
-### Superoperator for the Redfield Equation ###
+### Superoperator for the Redfield equation ###
 function 𝒮(prm::Lorentzian, ang::CouplingAngles, n::Levels, T)
 
-    H = HTot(prm, ang, n) # System Hamiltonian for given dimension of coupling
+    H = HTot(prm, ang, n) # system Hamiltonian for given dimension of coupling
 
-    ℒ(operator) = kronecker(operator, 𝕀(hspace_size(n))) # Define the left multiplication superoperator
-    ℛ(operator) = kronecker(𝕀(hspace_size(n)), transpose(operator)) # Define the right multiplication superoperator
+    ℒ(operator) = kronecker(operator, 𝕀(hspace_size(n))) # define the left multiplication superoperator
+    ℛ(operator) = kronecker(𝕀(hspace_size(n)), transpose(operator)) # define the right multiplication superoperator
 
     supop = -im*(ℒ(H) - ℛ(H))
 
