@@ -28,7 +28,7 @@ prm = LorPrm1D(2., 0.6, 10.)
 # prm = LorPrm2D(2., 0.6, 10., 2., 0.6, 10.) 
 # prm = LorPrm3D(2., 0.6, 10., 2., 0.6, 10., 2., 0.6, 10.)
 
-## Coupling Angles ##
+## Coupling angles ##
 ang =  CouplAng1D(atan(sqrt(2)), π/4)
 # ang =  CouplAng2D(π/2, 0.0, π/2, π/2)
 # ang =  CouplAng3D(π/2, 0.0, π/2, π/2, 0.0, 0.0)
