@@ -2,11 +2,11 @@
 #### variables.jl ####
 ######################
 
-γ = 1 # Gyromagnetic ratio for an electron
-Λ = 10^10 # Cutoff frequency for spectral density
-s0 = 1/2 # Spin size
+γ = 1 # gyromagnetic ratio for an electron
+Λ = 10^10 # cutoff frequency for spectral density
+s0 = 1/2 # spin size
 
-### Lorentzian Parameters ###
+### Lorentzian parameters ###
 abstract type Lorentzian end
 
 struct LorPrm1D{T <: Real} <: Lorentzian
@@ -36,7 +36,7 @@ struct LorPrm3D{T <: Real} <: Lorentzian
     α3::T
 end
 
-### Truncation of Harmonic Oscillator ###
+### Truncation of harmonic oscillator ###
 abstract type Levels end
 
 struct Lev1D <: Levels
@@ -54,7 +54,7 @@ struct Lev3D <: Levels
     n3::Int
 end
 
-### Coupling Angles ###
+### Coupling angles ###
 abstract type CouplingAngles end
 
 struct CouplAng1D{T<:Real} <: CouplingAngles
@@ -78,6 +78,7 @@ struct CouplAng3D{T<:Real} <: CouplingAngles
     ϕ3::T
 end
 
+### Dimensions of the Hilbert space ###
 hspace_size(n::Lev1D) = 2*n.n1
 hspace_size(n::Lev2D) = 2*n.n1*n.n2
 hspace_size(n::Lev3D) = 2*n.n1*n.n2*n.n3
