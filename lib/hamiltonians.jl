@@ -46,4 +46,5 @@ HB(prm::LorPrm1D, n::Lev1D) = (1/s0)*(prm.ω01*kronecker(𝕀s, N(n.n1)))
 HB(prm::LorPrm2D, n::Lev2D) = (1/s0)*(prm.ω01*kronecker(𝕀s, N(n.n1), 𝕀(n.n2)) + prm.ω02*kronecker(𝕀s, 𝕀(n.n1), N(n.n2)))
 HB(prm::LorPrm3D, n::Lev3D) = (1/s0)*(prm.ω01*kronecker(𝕀s, N(n.n1), 𝕀(n.n2), 𝕀(n.n3)) + prm.ω02*kronecker(𝕀s, 𝕀(n.n1), N(n.n2), 𝕀(n.n3)) + prm.ω03*kronecker(𝕀s, 𝕀(n.n1), 𝕀(n.n2), N(n.n3)))
 
+## Total Hamiltonian ##
 HTot(prm::Lorentzian, ang::CouplingAngles, n::Levels) = HS(n) + HInt(prm, ang, n) + HB(prm, n) 
