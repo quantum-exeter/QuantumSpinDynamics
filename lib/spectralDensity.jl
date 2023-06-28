@@ -2,9 +2,9 @@
 #### spectralDensity.jl ####
 ############################
 
-### Spectral Density ###
+### Spectral density ###
 
-## Ohmic (Algebraic) ##
+## Ohmic (algebraic cutoff) ##
 spectral_density_Ohm(ω, prm::LorPrm1D) = [((prm.Γ1*ω)/π)*(Λ^2/(ω^2 + Λ^2))]
 spectral_density_Ohm(ω, prm::LorPrm2D) = [((prm.Γ1*ω)/π)*(Λ^2/(ω^2 + Λ^2))
                                       ((prm.Γ2*ω)/π)*(Λ^2/(ω^2 + Λ^2))]
