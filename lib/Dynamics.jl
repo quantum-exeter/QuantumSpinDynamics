@@ -1,6 +1,6 @@
 module Dynamics
 
-    ### Import Packages ###
+    ### Import packages ###
     using LinearAlgebra
     using Kronecker
     using DifferentialEquations

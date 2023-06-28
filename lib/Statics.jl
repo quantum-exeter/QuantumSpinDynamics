@@ -1,6 +1,6 @@
 module Statics
 
-    ### Import Packages ###
+    ### Import packages ###
     using LinearAlgebra
     using Kronecker
     using QuadGK
