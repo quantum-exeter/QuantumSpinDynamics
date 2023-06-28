@@ -8,7 +8,7 @@ using .Statics
 
 ### Parameters ###
 
-## Lorentzian Spectral Density ##
+## Lorentzian spectral density ##
 # {ω_0, Γ, α}
 #prma = 2., 0.001, 10.
 #prmb = 2., 0.001, 1. 
@@ -25,22 +25,25 @@ using .Statics
 #prmk = 2., 0.6, 1000.
 
 prm = LorPrm1D(2., 0.6, 10.) 
-# prm = LorPrm2D(2., 0.6, 1000., 2., 0.6, 1000.) 
-# prm = LorPrm3D(2., 0.6, 0.1, 2., 0.6, 0.1, 2., 0.6, 0.1)
+# prm = LorPrm2D(2., 0.6, 10., 2., 0.6, 10.) 
+# prm = LorPrm3D(2., 0.6, 10., 2., 0.6, 10., 2., 0.6, 10.)
 
 ## Coupling Angles ##
 ang =  CouplAng1D(atan(sqrt(2)), π/4)
 # ang =  CouplAng2D(π/2, 0.0, π/2, π/2)
 # ang =  CouplAng3D(π/2, 0.0, π/2, π/2, 0.0, 0.0)
 
-## RC Levels ##
-n = Lev1D(100) # Number of RC levels
-# n = Lev2D(10, 10) # Number of RC levels
-# n = Lev3D(6, 6, 6) # Number of RC levels
+## RC levels ##
+n = Lev1D(100)
+# n = Lev2D(10, 10)
+# n = Lev3D(6, 6, 6)
 
-## Temperature Range ##
+## Temperature range ##
 T = exp10.(range(-3, 2, length=100))
 
+### Gibbs state expectation values ###
+
+## Initialise lists ##
 sxGS_list = zeros(length(T))
 syGS_list = zeros(length(T))
 szGS_list = zeros(length(T))
@@ -51,6 +54,9 @@ szGS_list = zeros(length(T))
     szGS_list[i] = real(szGibbs(big(T[i])))
 end
 
+### MF state expectation values ###
+
+## Initialise lists ##
 sxMFGS_list = zeros(length(T))
 syMFGS_list = zeros(length(T))
 szMFGS_list = zeros(length(T))
@@ -66,14 +72,10 @@ szMFGS_list = zeros(length(T))
     szMFGS_list[i] = real(szMFGS(prm, ang, n, Ti))
 end
 
-### Store Values ###
+### Store values ###
 dfGibbs = DataFrame(hcat(T, sxGS_list, syGS_list, szGS_list), :auto)
 dfMFGS = DataFrame(hcat(T, sxMFGS_list, syMFGS_list, szMFGS_list), :auto)
 
-### Export for Mac ###
-CSV.write("paper_data/qu_Gibbs.csv",  dfGibbs, header = ["T", "sxGS", "syGS", "szGS"])
-CSV.write("paper_data/qu_MFGS_1D_prmd_100.csv",  dfMFGS, header = ["T", "sxMFGS", "syMFGS", "szMFGS"])
-
-### Export for Windows ###
-# CSV.write(".//paper_data/qu_Gibbs.csv",  dfGibbs, header = ["T", "sxGS", "syGS", "szGS"])
-# CSV.write(".//paper_data/qu_MFGS_1D_prmd_200.csv",  dfGibbs, header = ["T", "sxMFGS", "syMFGS", "szMFGS"])
+### Export ###
+CSV.write("filename.csv",  dfGibbs, header = ["T", "sxGS", "syGS", "szGS"])
+CSV.write("filename.csv",  dfMFGS, header = ["T", "sxMFGS", "syMFGS", "szMFGS"])
