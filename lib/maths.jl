@@ -28,11 +28,11 @@ function ptraceSp(ρ)
 end
 
 ### Check for choppable components ###
-realIfClose(c) = isnan(imag(c)) || imag(c) < 1e-14 ? real(c) : c; # returns the real part of c if the imaginary part is small or NaN
+realIfClose(c) = isnan(imag(c)) || imag(c) < 1e-14 ? real(c) : c; # if the imaginary part of c is small or NaN, just outputs real part
 realIfClose(c::AbstractArray) = realIfClose.(c); # returns the real part of each element of c if their imaginary part is small or NaN
-chopReal(x) = real(x) < 1e-12 ? imag(x)*1im : x; # chop the real components
-chopImag(x) = imag(x) < 1e-12 ? real(x) : x; # chop the imaginary components
-chopBoth(x) = chopReal(chopImag(x)); # chop both the real and imaginary components
+chopReal(x) = real(x) < 1e-12 ? imag(x)*1im : x; # chops the real components, output is complex float
+chopImag(x) = imag(x) < 1e-12 ? real(x) : x; # chops the imaginary components, output is complex float
+chopBoth(x) = chopReal(chopImag(x)); # chops both the real and imaginary components
 
 ### Integration ###
 xcoth(x) = iszero(x) ? one(x) : x*coth(x)
