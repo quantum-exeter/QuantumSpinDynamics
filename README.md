@@ -1,5 +1,5 @@
 # QuantumSpinDynamics
-Julia code to solve the open-system of a single quantum spin coupled to multiple heat baths, both statically and dynamically. This is the code used in the [Enhanced entanglement in multi-bath spin-boson models](https://arxiv.org/abs/2306.11036) paper.
+Julia code to solve the open-system of a single quantum spin coupled to multiple heat baths, both statically and dynamically. This is the code used to generate the quantum curves in the [Enhanced entanglement in multi-bath spin-boson models](https://arxiv.org/abs/2306.11036) paper.
 
 ### Repo structure
 
