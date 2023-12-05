@@ -7,4 +7,4 @@ Julia code to solve the open-system of a single quantum spin coupled to multiple
 * **run**: contains code from ```lib``` to generate the paper data
 * **paper_data**: contains the data generated for the paper
 * **plot**: contains Jupyter notebooks with code to plot this data
-* **tempo**: contains code to run TEMPO as a verification of the RC results - see [Exact Dynamics of Nonadditive Environments in Non-Markovian Open Quantum Systems](https://journals.aps.org/prxquantum/abstract/10.1103/PRXQuantum.3.010321)
+* **tempo**: contains code to run TEMPO as a verification of the RC results - see [Exact Dynamics of Nonadditive Environments in Non-Markovian Open Quantum Systems](https://journals.aps.org/prxquantum/abstract/10.1103/PRXQuantum.3.010321) and the [OQuPy package](https://github.com/tempoCollaboration/OQuPy) 
