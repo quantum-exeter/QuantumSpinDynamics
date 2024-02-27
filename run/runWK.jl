@@ -25,7 +25,7 @@ using .Statics
 prm = LorPrm1D(2., 0.6, 0.2)
 
 ### Temperature range ###
-T = exp10.(range(-2, 2, length=20))
+T = 0.5*exp10.(range(-2, 2, length=20))
 
 ### MF expectation values ###
 
@@ -39,4 +39,4 @@ szWK_list = [realIfClose(szWK(prm, 1/i)) for i in T]
 dfWK = DataFrame(hcat(T, szWK_list), :auto)
 
 ### Export ###
-CSV.write("paper_data/filename.csv",  dfWK, header = ["T", "szWK"])
+CSV.write("paper_data/WK_analytical_prmc2.csv",  dfWK, header = ["T", "szWK"])
